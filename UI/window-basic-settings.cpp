@@ -1729,9 +1729,18 @@ void OBSBasicSettings::LoadVideoSettings()
 	loading = true;
 
 	if (obs_video_active()) {
+		QString string = QTStr("Basic.Settings.Video.CurrentlyActive");
+		auto appendOutput = [](void *data, obs_output_t *output) {
+			if (obs_output_active(output)) {
+				QString *string = (QString *)data;
+				string->append(QString("\n%1").arg(obs_output_get_name(output)));
+			}
+			return true;
+		};
+		obs_enum_outputs(appendOutput, &string);
+
 		ui->videoPage->setEnabled(false);
-		ui->videoMsg->setText(
-			QTStr("Basic.Settings.Video.CurrentlyActive"));
+		ui->videoMsg->setText(string);
 	}
 
 	LoadResolutionLists();

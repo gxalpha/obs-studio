@@ -9568,6 +9568,51 @@ void OBSBasic::ColorChange()
 	if (selectedItems.count() == 0)
 		return;
 
+    auto undo_redo = [this](const std::string &data_string){
+        OBSDataAutoRelease data = obs_data_create_from_json(data_string.c_str());
+
+        OBSDataArrayAutoRelease array = obs_data_get_array(data, "array");
+        
+        struct data_struct {
+            bool undo;
+            const char* scene;
+            SourceTree *sources;
+        };
+        struct data_struct data_struct_instance = {
+            .undo = obs_data_get_bool(data, "undo"),
+            .scene = obs_data_get_string(data, "scene"),
+            .sources = ui->sources
+        };
+        
+        obs_data_array_enum(array, [](obs_data_t *data, void *ptr){
+            struct data_struct *data_struct_instance = (data_struct *)ptr;
+
+            blog(LOG_INFO, "%s: Preset '%lld', Color '%s'", data_struct_instance->undo? "undo":"redo", obs_data_get_int(data, "old-color-preset"), obs_data_get_string(data, "old-color"));
+            
+            
+            OBSSceneAutoRelease scene = obs_get_scene_by_name(data_struct_instance->scene);
+            OBSSceneItem item = obs_scene_find_sceneitem_by_id(scene, obs_data_get_int(data, "sceneItemId"));
+
+            
+            const char* color = obs_data_get_string(data, data_struct_instance->undo ? "old-color" : "new-color");
+            if (strcmp(color, "") != 0) {
+                
+            } else {
+                int preset = obs_data_get_int(data, data_struct_instance->undo ? "old-color-preset":"new-color-preset");
+                
+                SourceTreeItem *treeItem = data_struct_instance->sources->GetItemWidget(obs_sceneitem_get_order_position(item));
+                treeItem->setStyleSheet("");
+                treeItem->setProperty("bgColor", preset);
+                treeItem->style()->unpolish(treeItem);
+                treeItem->style()->polish(treeItem);
+            }
+            
+        }, &data_struct_instance);
+        
+    };
+    OBSDataArrayAutoRelease undo_redo_array = obs_data_array_create();
+
+
 	if (colorButton) {
 		int preset = colorButton->property("bgColor").value<int>();
 
@@ -9583,9 +9628,20 @@ void OBSBasic::ColorChange()
 				ui->sources->Get(selectedItems[x].row());
 			OBSDataAutoRelease privData =
 				obs_sceneitem_get_private_settings(sceneItem);
+            
+            OBSDataAutoRelease undo_redo = obs_data_create();
+            obs_data_set_int(undo_redo, "sceneItemId", obs_sceneitem_get_id(sceneItem));
+            obs_data_set_int(undo_redo, "old-color-preset", obs_data_get_int(privData, "color-preset"));
+            obs_data_set_string(undo_redo, "old-color", obs_data_get_string(privData, "color"));
+
 			obs_data_set_int(privData, "color-preset", preset + 1);
 			obs_data_set_string(privData, "color", "");
-		}
+
+            obs_data_set_int(undo_redo, "new-color-preset", obs_data_get_int(privData, "color-preset"));
+            obs_data_set_string(undo_redo, "new-color", obs_data_get_string(privData, "color"));
+
+            obs_data_array_push_back(undo_redo_array, undo_redo);
+        }
 
 		for (int i = 1; i < 9; i++) {
 			stringstream button;
@@ -9686,7 +9742,19 @@ void OBSBasic::ColorChange()
 				obs_data_set_string(privData, "color", "");
 			}
 		}
-	}
+    }
+    OBSSource scene = GetCurrentSceneSource();
+    
+    OBSDataAutoRelease undo_redo_data = obs_data_create();
+    obs_data_set_array(undo_redo_data, "array", undo_redo_array);
+    obs_data_set_bool(undo_redo_data, "undo", true);
+    obs_data_set_string(undo_redo_data, "scene", obs_source_get_name(scene));
+
+    std::string undo_data = obs_data_get_json(undo_redo_data);
+    obs_data_set_bool(undo_redo_data, "undo", false);
+    std::string redo_data = obs_data_get_json(undo_redo_data);
+
+    undo_s.add_action("Set Color", undo_redo, undo_redo, undo_data, redo_data);
 }
 
 SourceTreeItem *OBSBasic::GetItemWidgetFromSceneItem(obs_sceneitem_t *sceneItem)

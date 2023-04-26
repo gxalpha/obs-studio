@@ -505,7 +505,8 @@ void OBSBasic::AddTransition()
 void OBSBasic::on_transitionAdd_clicked()
 {
 	bool foundConfigurableTransitions = false;
-	QMenu menu(this);
+	QMenu *menu = new QMenu(this);
+	menu->setAttribute(Qt::WA_DeleteOnClose);
 	size_t idx = 0;
 	const char *id;
 
@@ -518,13 +519,13 @@ void OBSBasic::on_transitionAdd_clicked()
 			connect(action, SIGNAL(triggered()), this,
 				SLOT(AddTransition()));
 
-			menu.addAction(action);
+			menu->addAction(action);
 			foundConfigurableTransitions = true;
 		}
 	}
 
 	if (foundConfigurableTransitions)
-		menu.exec(QCursor::pos());
+		menu->popup(QCursor::pos());
 }
 
 void OBSBasic::on_transitionRemove_clicked()
@@ -614,18 +615,19 @@ void OBSBasic::on_transitionProps_clicked()
 
 	auto properties = [&]() { CreatePropertiesWindow(source); };
 
-	QMenu menu(this);
+	QMenu *menu = new QMenu(this);
+	menu->setAttribute(Qt::WA_DeleteOnClose);
 
-	QAction *action = new QAction(QTStr("Rename"), &menu);
+	QAction *action = new QAction(QTStr("Rename"), menu);
 	connect(action, SIGNAL(triggered()), this, SLOT(RenameTransition()));
 	action->setProperty("transition", QVariant::fromValue(source));
-	menu.addAction(action);
+	menu->addAction(action);
 
-	action = new QAction(QTStr("Properties"), &menu);
+	action = new QAction(QTStr("Properties"), menu);
 	connect(action, &QAction::triggered, properties);
-	menu.addAction(action);
+	menu->addAction(action);
 
-	menu.exec(QCursor::pos());
+	menu->popup(QCursor::pos());
 }
 
 void OBSBasic::on_transitionDuration_valueChanged()
@@ -811,12 +813,14 @@ void OBSBasic::CreateProgramOptions()
 	programOptions->setLayout(layout);
 
 	auto onAdd = [this]() {
-		QScopedPointer<QMenu> menu(CreateTransitionMenu(this, nullptr));
-		menu->exec(QCursor::pos());
+		QMenu *menu = CreateTransitionMenu(this, nullptr);
+		menu->setAttribute(Qt::WA_DeleteOnClose);
+		menu->popup(QCursor::pos());
 	};
 
 	auto onConfig = [this]() {
-		QMenu menu(this);
+		QMenu *menu = new QMenu(this);
+		menu->setAttribute(Qt::WA_DeleteOnClose);
 		QAction *action;
 
 		auto toggleEditProperties = [this]() {
@@ -840,12 +844,12 @@ void OBSBasic::CreateProgramOptions()
 		};
 
 		auto showToolTip = [&]() {
-			QAction *act = menu.activeAction();
-			QToolTip::showText(QCursor::pos(), act->toolTip(),
-					   &menu, menu.actionGeometry(act));
+			QAction *act = menu->activeAction();
+			QToolTip::showText(QCursor::pos(), act->toolTip(), menu,
+					   menu->actionGeometry(act));
 		};
 
-		action = menu.addAction(
+		action = menu->addAction(
 			QTStr("QuickTransitions.DuplicateScene"));
 		action->setToolTip(QTStr("QuickTransitions.DuplicateSceneTT"));
 		action->setCheckable(true);
@@ -853,7 +857,7 @@ void OBSBasic::CreateProgramOptions()
 		connect(action, &QAction::triggered, toggleSceneDuplication);
 		connect(action, &QAction::hovered, showToolTip);
 
-		action = menu.addAction(
+		action = menu->addAction(
 			QTStr("QuickTransitions.EditProperties"));
 		action->setToolTip(QTStr("QuickTransitions.EditPropertiesTT"));
 		action->setCheckable(true);
@@ -862,14 +866,14 @@ void OBSBasic::CreateProgramOptions()
 		connect(action, &QAction::triggered, toggleEditProperties);
 		connect(action, &QAction::hovered, showToolTip);
 
-		action = menu.addAction(QTStr("QuickTransitions.SwapScenes"));
+		action = menu->addAction(QTStr("QuickTransitions.SwapScenes"));
 		action->setToolTip(QTStr("QuickTransitions.SwapScenesTT"));
 		action->setCheckable(true);
 		action->setChecked(swapScenesMode);
 		connect(action, &QAction::triggered, toggleSwapScenesMode);
 		connect(action, &QAction::hovered, showToolTip);
 
-		menu.exec(QCursor::pos());
+		menu->popup(QCursor::pos());
 	};
 
 	connect(transitionButton.data(), &QAbstractButton::clicked, this,

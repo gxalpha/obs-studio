@@ -2164,28 +2164,29 @@ void WidgetInfo::EditListAdd()
 	}
 
 	/* Files and URLs */
-	QMenu popup(view->window());
+	QMenu *popup = new QMenu(view->window());
+	popup->setAttribute(Qt::WA_DeleteOnClose);
 
 	QAction *action;
 
 	action = new QAction(QTStr("Basic.PropertiesWindow.AddFiles"), this);
 	connect(action, &QAction::triggered, this,
 		&WidgetInfo::EditListAddFiles);
-	popup.addAction(action);
+	popup->addAction(action);
 
 	action = new QAction(QTStr("Basic.PropertiesWindow.AddDir"), this);
 	connect(action, &QAction::triggered, this, &WidgetInfo::EditListAddDir);
-	popup.addAction(action);
+	popup->addAction(action);
 
 	if (type == OBS_EDITABLE_LIST_TYPE_FILES_AND_URLS) {
 		action = new QAction(QTStr("Basic.PropertiesWindow.AddURL"),
 				     this);
 		connect(action, &QAction::triggered, this,
 			&WidgetInfo::EditListAddText);
-		popup.addAction(action);
+		popup->addAction(action);
 	}
 
-	popup.exec(QCursor::pos());
+	popup->popup(QCursor::pos());
 }
 
 void WidgetInfo::EditListAddText()

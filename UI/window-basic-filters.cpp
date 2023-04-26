@@ -824,9 +824,11 @@ static bool QueryRemove(QWidget *parent, obs_source_t *source)
 void OBSBasicFilters::on_addAsyncFilter_clicked()
 {
 	ui->asyncFilters->setFocus();
-	QScopedPointer<QMenu> popup(CreateAddFilterPopupMenu(true));
-	if (popup)
-		popup->exec(QCursor::pos());
+	QMenu *popup = CreateAddFilterPopupMenu(true);
+	if (popup) {
+		popup->setAttribute(Qt::WA_DeleteOnClose);
+		popup->popup(QCursor::pos());
+	}
 }
 
 void OBSBasicFilters::on_removeAsyncFilter_clicked()
@@ -867,9 +869,11 @@ void OBSBasicFilters::on_asyncFilters_currentRowChanged(int row)
 void OBSBasicFilters::on_addEffectFilter_clicked()
 {
 	ui->effectFilters->setFocus();
-	QScopedPointer<QMenu> popup(CreateAddFilterPopupMenu(false));
-	if (popup)
-		popup->exec(QCursor::pos());
+	QMenu *popup = CreateAddFilterPopupMenu(false);
+	if (popup) {
+		popup->setAttribute(Qt::WA_DeleteOnClose);
+		popup->popup(QCursor::pos());
+	}
 }
 
 void OBSBasicFilters::on_removeEffectFilter_clicked()
@@ -937,11 +941,12 @@ void OBSBasicFilters::CustomContextMenu(const QPoint &pos, bool async)
 	QListWidget *list = async ? ui->asyncFilters : ui->effectFilters;
 	QListWidgetItem *item = list->itemAt(pos);
 
-	QMenu popup(window());
+	QMenu *popup = new QMenu(window());
+	popup->setAttribute(Qt::WA_DeleteOnClose);
 
 	QPointer<QMenu> addMenu = CreateAddFilterPopupMenu(async);
 	if (addMenu)
-		popup.addMenu(addMenu);
+		popup->addMenu(addMenu);
 
 	if (item) {
 		const char *dulpicateSlot =
@@ -954,12 +959,12 @@ void OBSBasicFilters::CustomContextMenu(const QPoint &pos, bool async)
 			async ? SLOT(on_removeAsyncFilter_clicked())
 			      : SLOT(on_removeEffectFilter_clicked());
 
-		popup.addSeparator();
-		popup.addAction(QTStr("Duplicate"), this, dulpicateSlot);
-		popup.addSeparator();
-		popup.addAction(QTStr("Rename"), this, renameSlot);
-		popup.addAction(QTStr("Remove"), this, removeSlot);
-		popup.addSeparator();
+		popup->addSeparator();
+		popup->addAction(QTStr("Duplicate"), this, dulpicateSlot);
+		popup->addSeparator();
+		popup->addAction(QTStr("Rename"), this, renameSlot);
+		popup->addAction(QTStr("Remove"), this, removeSlot);
+		popup->addSeparator();
 
 		QAction *copyAction = new QAction(QTStr("Copy"));
 		connect(copyAction, SIGNAL(triggered()), this,
@@ -967,7 +972,7 @@ void OBSBasicFilters::CustomContextMenu(const QPoint &pos, bool async)
 		copyAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_C));
 		ui->effectWidget->addAction(copyAction);
 		ui->asyncWidget->addAction(copyAction);
-		popup.addAction(copyAction);
+		popup->addAction(copyAction);
 	}
 
 	QAction *pasteAction = new QAction(QTStr("Paste"));
@@ -976,9 +981,9 @@ void OBSBasicFilters::CustomContextMenu(const QPoint &pos, bool async)
 	pasteAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_V));
 	ui->effectWidget->addAction(pasteAction);
 	ui->asyncWidget->addAction(pasteAction);
-	popup.addAction(pasteAction);
+	popup->addAction(pasteAction);
 
-	popup.exec(QCursor::pos());
+	popup->popup(QCursor::pos());
 }
 
 void OBSBasicFilters::EditItem(QListWidgetItem *item, bool async)

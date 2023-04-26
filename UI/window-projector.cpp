@@ -252,20 +252,22 @@ void OBSProjector::mousePressEvent(QMouseEvent *event)
 	if (event->button() == Qt::RightButton) {
 		OBSBasic *main =
 			reinterpret_cast<OBSBasic *>(App()->GetMainWindow());
-		QMenu popup(this);
+		QMenu *popup = new QMenu(this);
+		popup->setAttribute(Qt::WA_DeleteOnClose);
 
 		QMenu *projectorMenu = new QMenu(QTStr("Fullscreen"));
 		main->AddProjectorMenuMonitors(projectorMenu, this,
 					       SLOT(OpenFullScreenProjector()));
-		popup.addMenu(projectorMenu);
+		popup->addMenu(projectorMenu);
 
 		if (GetMonitor() > -1) {
-			popup.addAction(QTStr("Windowed"), this,
-					SLOT(OpenWindowedProjector()));
+			popup->addAction(QTStr("Windowed"), this,
+					 SLOT(OpenWindowedProjector()));
 
 		} else if (!this->isMaximized()) {
-			popup.addAction(QTStr("ResizeProjectorWindowToContent"),
-					this, SLOT(ResizeToContent()));
+			popup->addAction(
+				QTStr("ResizeProjectorWindowToContent"), this,
+				SLOT(ResizeToContent()));
 		}
 
 		QAction *alwaysOnTopButton = new QAction(
@@ -276,10 +278,10 @@ void OBSProjector::mousePressEvent(QMouseEvent *event)
 		connect(alwaysOnTopButton, &QAction::toggled, this,
 			&OBSProjector::AlwaysOnTopToggled);
 
-		popup.addAction(alwaysOnTopButton);
+		popup->addAction(alwaysOnTopButton);
 
-		popup.addAction(QTStr("Close"), this, SLOT(EscapeTriggered()));
-		popup.exec(QCursor::pos());
+		popup->addAction(QTStr("Close"), this, SLOT(EscapeTriggered()));
+		popup->popup(QCursor::pos());
 	} else if (event->button() == Qt::LeftButton) {
 		// Only MultiView projectors handle left click
 		if (this->type != ProjectorType::Multiview)

@@ -416,25 +416,26 @@ void ScriptsTool::on_scripts_customContextMenuRequested(const QPoint &pos)
 
 	QListWidgetItem *item = ui->scripts->itemAt(pos);
 
-	QMenu popup(this);
+	QMenu *popup = new QMenu(this);
+	popup->setAttribute(Qt::WA_DeleteOnClose);
 
 	obs_frontend_push_ui_translation(obs_module_get_string);
 
-	popup.addAction(tr("Add"), this, SLOT(on_addScripts_clicked()));
+	popup->addAction(tr("Add"), this, SLOT(on_addScripts_clicked()));
 
 	if (item) {
-		popup.addSeparator();
-		popup.addAction(obs_module_text("Reload"), this,
-				SLOT(on_reloadScripts_clicked()));
-		popup.addAction(obs_module_text("OpenFileLocation"), this,
-				SLOT(OpenScriptParentDirectory()));
-		popup.addSeparator();
-		popup.addAction(tr("Remove"), this,
-				SLOT(on_removeScripts_clicked()));
+		popup->addSeparator();
+		popup->addAction(obs_module_text("Reload"), this,
+				 SLOT(on_reloadScripts_clicked()));
+		popup->addAction(obs_module_text("OpenFileLocation"), this,
+				 SLOT(OpenScriptParentDirectory()));
+		popup->addSeparator();
+		popup->addAction(tr("Remove"), this,
+				 SLOT(on_removeScripts_clicked()));
 	}
 	obs_frontend_pop_ui_translation();
 
-	popup.exec(QCursor::pos());
+	popup->popup(QCursor::pos());
 }
 
 void ScriptsTool::on_editScript_clicked()

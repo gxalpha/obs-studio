@@ -110,8 +110,12 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
         }
     }
 
+    let testProp = CMIOExtensionProperty(rawValue: "4cc_test_glob_0000")
+    let placeholderProp = CMIOExtensionProperty(rawValue: "4cc_hldr_glob_0000")
+    var placeholderData : NSData = "a string here".data(using: .utf8)! as NSData//Data()
+
     var availableProperties: Set<CMIOExtensionProperty> {
-        return [.deviceTransportType, .deviceModel]
+        return [.deviceTransportType, .deviceModel, testProp, placeholderProp]
     }
 
     func deviceProperties(forProperties properties: Set<CMIOExtensionProperty>) throws
@@ -124,11 +128,26 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
         if properties.contains(.deviceModel) {
             deviceProperties.model = "OBS Camera Extension"
         }
+        if properties.contains(testProp) {
+            deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: 33333330 as NSNumber), forProperty: testProp)
+        }
+        if properties.contains(placeholderProp) {
+            deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: placeholderData as NSData), forProperty: placeholderProp)
+        }
 
         return deviceProperties
     }
 
     func setDeviceProperties(_ deviceProperties: CMIOExtensionDeviceProperties) throws {
+        if let obj = deviceProperties.propertiesDictionary[placeholderProp] {
+            if let value = obj.value as? NSData {
+                placeholderData = value
+                _placeholderImage = NSImage(data: value as Data)
+                os_log("OBSCAMERALOG SUCCESS setting placeholder image")
+            } else {
+                os_log("OBSCAMERALOG Couldn't set the placeholder :(")
+            }
+        }
     }
 
     func startStreaming() {

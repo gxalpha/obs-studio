@@ -39,6 +39,13 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
     private var _bufferAuxAttributes: NSDictionary!
 
     private var _placeholderImage: NSImage!
+    private var _defaultPlaceholderImage: NSImage!
+    private var _placeholderUsed : Bool = true
+
+    private let testProp = CMIOExtensionProperty(rawValue: "4cc_test_glob_0000")
+    private let placeholderDataProp = CMIOExtensionProperty(rawValue: "4cc_plcd_glob_0000")
+    private let usePlaceholderProp = CMIOExtensionProperty(rawValue: "4cc_plcr_glob_0000")
+
 
     init(localizedName: String, deviceUUID: UUID, sourceUUID: UUID, sinkUUID: UUID) {
         super.init()
@@ -102,6 +109,8 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
         if let placeholderURL = placeholderURL {
             if let image = NSImage(contentsOf: placeholderURL) {
                 _placeholderImage = image
+                _defaultPlaceholderImage = image
+                _placeholderUsed = false
             } else {
                 fatalError("Unable to create NSImage from placeholder image in bundle resources")
             }
@@ -110,12 +119,8 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
         }
     }
 
-    let testProp = CMIOExtensionProperty(rawValue: "4cc_test_glob_0000")
-    let placeholderProp = CMIOExtensionProperty(rawValue: "4cc_hldr_glob_0000")
-    var placeholderData : NSData = "a string here".data(using: .utf8)! as NSData//Data()
-
     var availableProperties: Set<CMIOExtensionProperty> {
-        return [.deviceTransportType, .deviceModel, testProp, placeholderProp]
+        return [.deviceTransportType, .deviceModel, testProp, placeholderDataProp, usePlaceholderProp]
     }
 
     func deviceProperties(forProperties properties: Set<CMIOExtensionProperty>) throws
@@ -131,21 +136,32 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
         if properties.contains(testProp) {
             deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: 33333330 as NSNumber), forProperty: testProp)
         }
-        if properties.contains(placeholderProp) {
-            deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: placeholderData as NSData), forProperty: placeholderProp)
+        if properties.contains(placeholderDataProp) {
+            let bitmapRep = NSBitmapImageRep(cgImage: (_defaultPlaceholderImage!.cgImage(forProposedRect: nil, context: nil, hints: nil)!))
+            let placeholderData = bitmapRep.representation(using: .png, properties: [:])! as NSData
+            deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: placeholderData as NSData), forProperty: placeholderDataProp)
+        }
+        if properties.contains(usePlaceholderProp) {
+            deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: _placeholderUsed as NSNumber), forProperty: usePlaceholderProp)
         }
 
         return deviceProperties
     }
 
     func setDeviceProperties(_ deviceProperties: CMIOExtensionDeviceProperties) throws {
-        if let obj = deviceProperties.propertiesDictionary[placeholderProp] {
-            if let value = obj.value as? NSData {
-                placeholderData = value
+        if let data = deviceProperties.propertiesDictionary[placeholderDataProp] {
+            if let value = data.value as? NSData {
                 _placeholderImage = NSImage(data: value as Data)
-                os_log("OBSCAMERALOG SUCCESS setting placeholder image")
-            } else {
-                os_log("OBSCAMERALOG Couldn't set the placeholder :(")
+                _placeholderUsed = true
+            }
+        }
+        if let data = deviceProperties.propertiesDictionary[usePlaceholderProp] {
+            if let value = data.value as? NSNumber {
+                // This function can only reset
+                if (!value.boolValue && _placeholderUsed) {
+                    _placeholderUsed = false
+                    _placeholderImage = _defaultPlaceholderImage
+                }
             }
         }
     }

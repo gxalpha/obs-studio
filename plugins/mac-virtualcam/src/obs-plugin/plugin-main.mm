@@ -1,3 +1,4 @@
+@import AppKit;
 @import CoreMediaIO;
 @import SystemExtensions;
 
@@ -251,6 +252,26 @@ static const char *virtualcam_output_get_name(void *type_data)
     return obs_module_text("Plugin_Name");
 }
 
+static void set_placeholder_proc(void *data, calldata_t *cd)
+{
+    struct virtualcam_data *vcam = (struct virtualcam_data *) data;
+
+    constexpr FourCharCode selector = ('p' << 24) | ('l' << 16) | ('c' << 8) | 'd';  // 'plcd'
+    constexpr CMIOObjectPropertyAddress address {.mSelector = selector,
+                                                 .mScope = kCMIOObjectPropertyScopeGlobal,
+                                                 .mElement = kCMIOObjectPropertyElementMain};
+
+    const char *file = calldata_string(cd, "file");
+    NSImage *image = [[NSImage alloc] initWithContentsOfFile:@(file)];
+
+    NSBitmapImageRep *bitmapImageRep = [[NSBitmapImageRep alloc] initWithCGImage:[image CGImageForProposedRect:nil
+                                                                                                       context:nil
+                                                                                                         hints:nil]];
+    NSData *representation = [bitmapImageRep representationUsingType:NSBitmapImageFileTypePNG
+                                                          properties:[NSDictionary new]];
+    CMIOObjectSetPropertyData(vcam->deviceID, &address, 0, nullptr, representation.length, representation.bytes);
+}
+
 static void *virtualcam_output_create(obs_data_t *settings, obs_output_t *output)
 {
     UNUSED_PARAMETER(settings);
@@ -262,6 +283,9 @@ static void *virtualcam_output_create(obs_data_t *settings, obs_output_t *output
     if (cmio_extension_supported()) {
         vcam->extensionDelegate = [[SystemExtensionActivationDelegate alloc] initWithVcam:vcam];
         install_cmio_system_extension(vcam);
+
+        proc_handler_t *proc_handler = obs_output_get_proc_handler(output);
+        proc_handler_add(proc_handler, "void set_placeholder(string file)", set_placeholder_proc, nullptr);
     } else {
         vcam->machServer = [[OBSDALMachServer alloc] init];
     }

@@ -6,6 +6,7 @@
 #include <util/platform.h>
 
 #include <QStandardItem>
+#import <CoreGraphics/CoreGraphics.h>
 
 OBSBasicVCamConfig::OBSBasicVCamConfig(const VCamConfig &_config,
 				       bool _vcamActive, QWidget *parent)
@@ -36,6 +37,39 @@ OBSBasicVCamConfig::OBSBasicVCamConfig(const VCamConfig &_config,
 
 	connect(ui->buttonBox, &QDialogButtonBox::accepted, this,
 		&OBSBasicVCamConfig::UpdateConfig);
+
+	obs_output_t *output = obs_get_output_by_name("virtualcam_output");
+	proc_handler_t *handler = obs_output_get_proc_handler(output);
+
+	calldata_t cd;
+	uint8_t stack[128];
+	calldata_init_fixed(&cd, stack, sizeof(stack));
+
+	proc_handler_call(handler, "get_placeholder", &cd);
+
+	CGImageRef cgImage = (CGImageRef)calldata_ptr(&cd, "image_data");
+	const size_t width = CGImageGetWidth(cgImage);
+	const size_t height = CGImageGetHeight(cgImage);
+	QImage qImage(width, height, QImage::Format_ARGB32_Premultiplied);
+	QPixmap pixmap(width, height);
+
+	CGColorSpaceRef colorSpace =
+		CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+	CGContextRef context = CGBitmapContextCreate(
+		qImage.bits(), width, height, 8, qImage.bytesPerLine(),
+		colorSpace,
+		kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+
+	CGRect rect = CGRectMake(0, 0, width, height);
+	CGContextDrawImage(context, rect, cgImage);
+
+	CFRelease(colorSpace);
+	CFRelease(context);
+
+	ui->placeholderPreview->setPixmap(QPixmap::fromImage(qImage).scaled(
+		160, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+	//ui->placeholderPreview->setPixmap(QPixmap::fromImage(qImage));
+	//ui->placeholderPreview->setPixmap(pixmap);
 }
 
 void OBSBasicVCamConfig::OutputTypeChanged()

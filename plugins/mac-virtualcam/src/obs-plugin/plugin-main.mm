@@ -252,14 +252,29 @@ static const char *virtualcam_output_get_name(void *type_data)
     return obs_module_text("Plugin_Name");
 }
 
-static void set_placeholder_proc(void *data, calldata_t *cd)
+static constexpr FourCharCode placeholderDataSelector = ('p' << 24) | ('l' << 16) | ('c' << 8) | 'd';  // 'plcd'
+static constexpr CMIOObjectPropertyAddress placeholderDataAddress {.mSelector = placeholderDataSelector,
+                                                                   .mScope = kCMIOObjectPropertyScopeGlobal,
+                                                                   .mElement = kCMIOObjectPropertyElementMain};
+
+static void get_placeholder_proc(void *data, calldata_t *cd)
 {
     struct virtualcam_data *vcam = (struct virtualcam_data *) data;
 
-    constexpr FourCharCode selector = ('p' << 24) | ('l' << 16) | ('c' << 8) | 'd';  // 'plcd'
-    constexpr CMIOObjectPropertyAddress address {.mSelector = selector,
-                                                 .mScope = kCMIOObjectPropertyScopeGlobal,
-                                                 .mElement = kCMIOObjectPropertyElementMain};
+    UInt32 size, used;
+    CMIOObjectGetPropertyDataSize(vcam->deviceID, &placeholderDataAddress, 0, nullptr, &size);
+    NSMutableData *imageData = [[NSMutableData alloc] initWithLength:size];
+    CMIOObjectGetPropertyData(vcam->deviceID, &placeholderDataAddress, 0, nullptr, size, &used,
+                              [imageData mutableBytes]);
+    NSImage *nsImage = [[NSImage alloc] initWithData:imageData];
+
+    CGImageRef cgImage = [nsImage CGImageForProposedRect:nil context:nil hints:nil];
+    calldata_set_ptr(cd, "image_data", cgImage);
+}
+
+static void set_placeholder_proc(void *data, calldata_t *cd)
+{
+    struct virtualcam_data *vcam = (struct virtualcam_data *) data;
 
     const char *file = calldata_string(cd, "file");
     NSImage *image = [[NSImage alloc] initWithContentsOfFile:@(file)];
@@ -269,7 +284,8 @@ static void set_placeholder_proc(void *data, calldata_t *cd)
                                                                                                          hints:nil]];
     NSData *representation = [bitmapImageRep representationUsingType:NSBitmapImageFileTypePNG
                                                           properties:[NSDictionary new]];
-    CMIOObjectSetPropertyData(vcam->deviceID, &address, 0, nullptr, representation.length, representation.bytes);
+    CMIOObjectSetPropertyData(vcam->deviceID, &placeholderDataAddress, 0, nullptr, representation.length,
+                              representation.bytes);
 }
 
 static void *virtualcam_output_create(obs_data_t *settings, obs_output_t *output)
@@ -285,7 +301,8 @@ static void *virtualcam_output_create(obs_data_t *settings, obs_output_t *output
         install_cmio_system_extension(vcam);
 
         proc_handler_t *proc_handler = obs_output_get_proc_handler(output);
-        proc_handler_add(proc_handler, "void set_placeholder(string file)", set_placeholder_proc, nullptr);
+        proc_handler_add(proc_handler, "void set_placeholder(string file)", set_placeholder_proc, vcam);
+        proc_handler_add(proc_handler, "void get_placeholder(out ptr image_data)", get_placeholder_proc, vcam);
     } else {
         vcam->machServer = [[OBSDALMachServer alloc] init];
     }

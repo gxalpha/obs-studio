@@ -38,35 +38,67 @@ OBSBasicVCamConfig::OBSBasicVCamConfig(const VCamConfig &_config,
 	connect(ui->buttonBox, &QDialogButtonBox::accepted, this,
 		&OBSBasicVCamConfig::UpdateConfig);
 
-	obs_output_t *output = obs_get_output_by_name("virtualcam_output");
-	proc_handler_t *handler = obs_output_get_proc_handler(output);
+	connect(ui->placeholderOptions, &QPushButton::pressed, [this]() {
+		QMenu *menu = new QMenu(this);
+		menu->setAttribute(Qt::WA_DeleteOnClose);
+		menu->addAction("Set", [&]() {
+			obs_output_t *output =
+				obs_get_output_by_name("virtualcam_output");
+			proc_handler_t *handler =
+				obs_output_get_proc_handler(output);
 
-	calldata_t cd;
-	uint8_t stack[128];
-	calldata_init_fixed(&cd, stack, sizeof(stack));
+			calldata_t cd;
+			uint8_t stack[128];
+			calldata_init_fixed(&cd, stack, sizeof(stack));
 
-	proc_handler_call(handler, "get_placeholder", &cd);
+		});
+		menu->addAction("Get", [this]() {
+			obs_output_t *output =
+				obs_get_output_by_name("virtualcam_output");
+			proc_handler_t *handler =
+				obs_output_get_proc_handler(output);
 
-	CGImageRef cgImage = (CGImageRef)calldata_ptr(&cd, "image_data");
-	const size_t width = CGImageGetWidth(cgImage);
-	const size_t height = CGImageGetHeight(cgImage);
-	QImage qImage(width, height, QImage::Format_ARGB32_Premultiplied);
+			calldata_t cd;
+			uint8_t stack[128];
+			calldata_init_fixed(&cd, stack, sizeof(stack));
+			proc_handler_call(handler, "get_placeholder", &cd);
 
-	CGColorSpaceRef colorSpace =
-		CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-	CGContextRef context = CGBitmapContextCreate(
-		qImage.bits(), width, height, 8, qImage.bytesPerLine(),
-		colorSpace,
-		kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+			CGImageRef cgImage =
+				(CGImageRef)calldata_ptr(&cd, "image_data");
+			const size_t width = CGImageGetWidth(cgImage);
+			const size_t height = CGImageGetHeight(cgImage);
+			QImage qImage(width, height,
+				      QImage::Format_ARGB32_Premultiplied);
 
-	CGRect rect = CGRectMake(0, 0, width, height);
-	CGContextDrawImage(context, rect, cgImage);
+			CGColorSpaceRef colorSpace =
+				CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+			CGContextRef context = CGBitmapContextCreate(
+				qImage.bits(), width, height, 8,
+				qImage.bytesPerLine(), colorSpace,
+				kCGImageAlphaPremultipliedFirst |
+					kCGBitmapByteOrder32Host);
 
-	CFRelease(colorSpace);
-	CFRelease(context);
+			CGRect rect = CGRectMake(0, 0, width, height);
+			CGContextDrawImage(context, rect, cgImage);
 
-	ui->placeholderPreview->setPixmap(QPixmap::fromImage(qImage).scaled(
-		320, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+			CFRelease(colorSpace);
+			CFRelease(context);
+
+			ui->placeholderPreview->setPixmap(
+				QPixmap::fromImage(qImage).scaled(
+					320, 180, Qt::KeepAspectRatio,
+					Qt::SmoothTransformation));
+		});
+		menu->addAction("Reset", []() {
+			obs_output_t *output =
+				obs_get_output_by_name("virtualcam_output");
+			proc_handler_t *handler =
+				obs_output_get_proc_handler(output);
+			proc_handler_call(handler, "reset_placeholder",
+					  nullptr);
+		});
+		menu->popup(QCursor::pos());
+	});
 }
 
 void OBSBasicVCamConfig::OutputTypeChanged()

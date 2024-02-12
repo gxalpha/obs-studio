@@ -137,7 +137,7 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
             deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: 33333330 as NSNumber), forProperty: testProp)
         }
         if properties.contains(placeholderDataProp) {
-            let bitmapRep = NSBitmapImageRep(cgImage: (_defaultPlaceholderImage!.cgImage(forProposedRect: nil, context: nil, hints: nil)!))
+            let bitmapRep = NSBitmapImageRep(cgImage: (_placeholderImage!.cgImage(forProposedRect: nil, context: nil, hints: nil)!))
             let placeholderData = bitmapRep.representation(using: .png, properties: [:])! as NSData
             deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: placeholderData as NSData), forProperty: placeholderDataProp)
         }

@@ -51,7 +51,6 @@ OBSBasicVCamConfig::OBSBasicVCamConfig(const VCamConfig &_config,
 	const size_t width = CGImageGetWidth(cgImage);
 	const size_t height = CGImageGetHeight(cgImage);
 	QImage qImage(width, height, QImage::Format_ARGB32_Premultiplied);
-	QPixmap pixmap(width, height);
 
 	CGColorSpaceRef colorSpace =
 		CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
@@ -67,9 +66,7 @@ OBSBasicVCamConfig::OBSBasicVCamConfig(const VCamConfig &_config,
 	CFRelease(context);
 
 	ui->placeholderPreview->setPixmap(QPixmap::fromImage(qImage).scaled(
-		160, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-	//ui->placeholderPreview->setPixmap(QPixmap::fromImage(qImage));
-	//ui->placeholderPreview->setPixmap(pixmap);
+		320, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void OBSBasicVCamConfig::OutputTypeChanged()

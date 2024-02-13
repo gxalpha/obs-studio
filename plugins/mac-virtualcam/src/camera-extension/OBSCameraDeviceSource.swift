@@ -40,11 +40,9 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
 
     private var _placeholderImage: NSImage!
     private var _defaultPlaceholderImage: NSImage!
-    private var _placeholderUsed : Bool = true
 
     private let testProp = CMIOExtensionProperty(rawValue: "4cc_test_glob_0000")
     private let placeholderDataProp = CMIOExtensionProperty(rawValue: "4cc_plcd_glob_0000")
-    private let usePlaceholderProp = CMIOExtensionProperty(rawValue: "4cc_plcr_glob_0000")
 
 
     init(localizedName: String, deviceUUID: UUID, sourceUUID: UUID, sinkUUID: UUID) {
@@ -110,7 +108,6 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
             if let image = NSImage(contentsOf: placeholderURL) {
                 _placeholderImage = image
                 _defaultPlaceholderImage = image
-                _placeholderUsed = false
             } else {
                 fatalError("Unable to create NSImage from placeholder image in bundle resources")
             }
@@ -120,7 +117,7 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
     }
 
     var availableProperties: Set<CMIOExtensionProperty> {
-        return [.deviceTransportType, .deviceModel, testProp, placeholderDataProp, usePlaceholderProp]
+        return [.deviceTransportType, .deviceModel, testProp, placeholderDataProp]
     }
 
     func deviceProperties(forProperties properties: Set<CMIOExtensionProperty>) throws
@@ -141,9 +138,6 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
             let placeholderData = bitmapRep.representation(using: .png, properties: [:])! as NSData
             deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: placeholderData as NSData), forProperty: placeholderDataProp)
         }
-        if properties.contains(usePlaceholderProp) {
-            deviceProperties.setPropertyState(CMIOExtensionPropertyState(value: _placeholderUsed as NSNumber), forProperty: usePlaceholderProp)
-        }
 
         return deviceProperties
     }
@@ -152,16 +146,6 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
         if let data = deviceProperties.propertiesDictionary[placeholderDataProp] {
             if let value = data.value as? NSData {
                 _placeholderImage = NSImage(data: value as Data)
-                _placeholderUsed = true
-            }
-        }
-        if let data = deviceProperties.propertiesDictionary[usePlaceholderProp] {
-            if let value = data.value as? NSNumber {
-                // This function can only reset
-                if (!value.boolValue && _placeholderUsed) {
-                    _placeholderUsed = false
-                    _placeholderImage = _defaultPlaceholderImage
-                }
             }
         }
     }

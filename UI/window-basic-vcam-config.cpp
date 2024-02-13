@@ -94,8 +94,10 @@ OBSBasicVCamConfig::OBSBasicVCamConfig(const VCamConfig &_config,
 				obs_get_output_by_name("virtualcam_output");
 			proc_handler_t *handler =
 				obs_output_get_proc_handler(output);
-			proc_handler_call(handler, "reset_placeholder",
-					  nullptr);
+
+			calldata_t cd;
+			uint8_t stack[128];
+			calldata_init_fixed(&cd, stack, sizeof(stack));
 		});
 		menu->popup(QCursor::pos());
 	});

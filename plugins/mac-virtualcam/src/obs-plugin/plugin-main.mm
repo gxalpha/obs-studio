@@ -288,19 +288,6 @@ static void set_placeholder_proc(void *data, calldata_t *cd)
                               representation.bytes);
 }
 
-static void reset_placeholder_proc(void *data, calldata_t *)
-{
-    constexpr FourCharCode placeholderResetSelector = ('p' << 24) | ('l' << 16) | ('c' << 8) | 'r';  // 'plcr'
-    constexpr CMIOObjectPropertyAddress placeholderResetAddress {.mSelector = placeholderResetSelector,
-                                                                 .mScope = kCMIOObjectPropertyScopeGlobal,
-                                                                 .mElement = kCMIOObjectPropertyElementMain};
-
-    struct virtualcam_data *vcam = (struct virtualcam_data *) data;
-    NSNumber *magicNumber = [NSNumber numberWithBool:NO];
-    OSStatus result = CMIOObjectSetPropertyData(vcam->deviceID, &placeholderResetAddress, 0, nullptr,
-                                                sizeof(magicNumber), &magicNumber);
-}
-
 static void *virtualcam_output_create(obs_data_t *settings, obs_output_t *output)
 {
     UNUSED_PARAMETER(settings);
@@ -316,7 +303,6 @@ static void *virtualcam_output_create(obs_data_t *settings, obs_output_t *output
         proc_handler_t *proc_handler = obs_output_get_proc_handler(output);
         proc_handler_add(proc_handler, "void set_placeholder(string file)", set_placeholder_proc, vcam);
         proc_handler_add(proc_handler, "void get_placeholder(out ptr image_data)", get_placeholder_proc, vcam);
-        proc_handler_add(proc_handler, "void reset_placeholder()", reset_placeholder_proc, vcam);
     } else {
         vcam->machServer = [[OBSDALMachServer alloc] init];
     }

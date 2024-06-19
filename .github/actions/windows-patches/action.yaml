@@ -27,6 +27,12 @@ runs:
         fetch-depth: 0
         ref: ${{ inputs.tagName }}
 
+    - name: Create output dir
+      shell: pwsh
+      run: |
+        . ${env:GITHUB_ACTION_PATH}\Ensure-Location.ps1
+        Ensure-Location output
+
     - name: Prepare Release Notes
       shell: pwsh
       run: |

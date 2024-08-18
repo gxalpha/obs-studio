@@ -12,7 +12,13 @@ OBSPropertiesViewIdian::OBSPropertiesViewIdian(obs_properties_t *props,
 	groupBox->setTitle("Properties");
 	setWidgetResizable(true);
 	setFrameShape(Shape::NoFrame);
-	setWidget(groupBox);
+	QWidget *widget = new QWidget();
+	QLayout *layout = new QVBoxLayout(widget);
+	layout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+	layout->addWidget(groupBox);
+	widget->setLayout(layout);
+
+	setWidget(widget);
 	AddProperties(props);
 }
 

@@ -32,7 +32,7 @@
 #include <obs-config.h>
 #include <obs.hpp>
 #include <qt-wrappers.hpp>
-#include <slider-ignorewheel.hpp>
+#include <extraqt/slider-ignorewheel.hpp>
 
 #include <QDir>
 #include <QFile>

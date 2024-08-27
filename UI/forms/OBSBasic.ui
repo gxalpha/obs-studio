@@ -2244,7 +2244,7 @@
   <customwidget>
    <class>VScrollArea</class>
    <extends>QScrollArea</extends>
-   <header>vertical-scroll-area.hpp</header>
+   <header>extraqt/vertical-scroll-area.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>

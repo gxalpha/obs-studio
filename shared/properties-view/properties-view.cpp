@@ -31,9 +31,9 @@
 #include "properties-view.moc.hpp"
 
 #include <qt-wrappers.hpp>
-#include <plain-text-edit.hpp>
-#include <slider-ignorewheel.hpp>
-#include <icon-label.hpp>
+#include <extraqt/plain-text-edit.hpp>
+#include <extraqt/slider-ignorewheel.hpp>
+#include <extraqt/icon-label.hpp>
 #include <cstdlib>
 #include <initializer_list>
 #include <obs-data.h>

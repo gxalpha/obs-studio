@@ -21,7 +21,7 @@
 #include <QMessageBox>
 #include <util/dstr.hpp>
 #include <qt-wrappers.hpp>
-#include <slider-ignorewheel.hpp>
+#include <extraqt/slider-ignorewheel.hpp>
 #include "window-basic-main.hpp"
 #include "window-basic-main-outputs.hpp"
 #include "window-basic-vcam-config.hpp"

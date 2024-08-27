@@ -16,7 +16,7 @@
 #include <QUrl>
 #include <QDesktopServices>
 #include <qt-wrappers.hpp>
-#include <plain-text-edit.hpp>
+#include <extraqt/plain-text-edit.hpp>
 #include <properties-view.hpp>
 
 #include <obs.hpp>

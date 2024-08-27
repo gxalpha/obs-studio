@@ -2,28 +2,11 @@ if(NOT TARGET OBS::properties-view)
   add_subdirectory("${CMAKE_SOURCE_DIR}/shared/properties-view" "${CMAKE_BINARY_DIR}/shared/properties-view")
 endif()
 
-if(NOT TARGET OBS::qt-plain-text-edit)
-  add_subdirectory("${CMAKE_SOURCE_DIR}/shared/qt/plain-text-edit" "${CMAKE_BINARY_DIR}/shared/qt/plain-text-edit")
+if(NOT TARGET OBS::extraqt)
+  add_subdirectory("${CMAKE_SOURCE_DIR}/shared/qt/widgets" "${CMAKE_BINARY_DIR}/shared/qt/widgets")
 endif()
 
-if(NOT TARGET OBS::qt-slider-ignorewheel)
-  add_subdirectory(
-    "${CMAKE_SOURCE_DIR}/shared/qt/slider-ignorewheel"
-    "${CMAKE_BINARY_DIR}/shared/qt/slider-ignorewheel"
-  )
-endif()
-
-if(NOT TARGET OBS::qt-vertical-scroll-area)
-  add_subdirectory(
-    "${CMAKE_SOURCE_DIR}/shared/qt/vertical-scroll-area"
-    "${CMAKE_BINARY_DIR}/shared/qt/vertical-scroll-area"
-  )
-endif()
-
-target_link_libraries(
-  obs-studio
-  PRIVATE OBS::properties-view OBS::qt-plain-text-edit OBS::qt-slider-ignorewheel OBS::qt-vertical-scroll-area
-)
+target_link_libraries(obs-studio PRIVATE OBS::properties-view OBS::extraqt)
 
 target_sources(
   obs-studio

@@ -99,7 +99,7 @@
   <customwidget>
    <class>OBSPlainTextEdit</class>
    <extends>QPlainTextEdit</extends>
-   <header>plain-text-edit.hpp</header>
+   <header>extraqt/plain-text-edit.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

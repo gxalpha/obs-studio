@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QMouseEvent>
-#include <slider-ignorewheel.hpp>
+#include <extraqt/slider-ignorewheel.hpp>
 
 class AbsoluteSlider : public SliderIgnoreScroll {
 	Q_OBJECT

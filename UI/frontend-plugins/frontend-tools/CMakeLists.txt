@@ -14,8 +14,8 @@ if(NOT TARGET OBS::properties-view)
   add_subdirectory("${CMAKE_SOURCE_DIR}/shared/properties-view" "${CMAKE_BINARY_DIR}/shared/properties-view")
 endif()
 
-if(NOT TARGET OBS::qt-plain-text-edit)
-  add_subdirectory("${CMAKE_SOURCE_DIR}/shared/qt/plain-text-edit" "${CMAKE_BINARY_DIR}/shared/qt/plain-text-edit")
+if(NOT TARGET OBS::extraqt)
+  add_subdirectory("${CMAKE_SOURCE_DIR}/shared/qt/widgets" "${CMAKE_BINARY_DIR}/shared/qt/widgets")
 endif()
 
 if(NOT TARGET OBS::qt-wrappers)
@@ -60,7 +60,7 @@ target_link_libraries(
     OBS::frontend-api
     OBS::libobs
     OBS::properties-view
-    OBS::qt-plain-text-edit
+    OBS::extraqt
     OBS::qt-wrappers
     Qt::Widgets
     "$<$<PLATFORM_ID:Darwin>:$<LINK_LIBRARY:FRAMEWORK,Cocoa>>"

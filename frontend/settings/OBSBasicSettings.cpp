@@ -1159,8 +1159,8 @@ void OBSBasicSettings::LoadLanguageList()
 #if defined(_WIN32) || defined(ENABLE_SPARKLE_UPDATER)
 void TranslateBranchInfo(const QString &name, QString &displayName, QString &description)
 {
-	QString translatedName = QTStr("Basic.Settings.General.ChannelName." + name.toUtf8());
-	QString translatedDesc = QTStr("Basic.Settings.General.ChannelDescription." + name.toUtf8());
+	QString translatedName = QTStr(QT_TO_UTF8(QString("Basic.Settings.General.ChannelName." + name)));
+	QString translatedDesc = QTStr(QT_TO_UTF8(QString("Basic.Settings.General.ChannelDescription." + name)));
 
 	if (!translatedName.startsWith("Basic.Settings."))
 		displayName = translatedName;
@@ -2525,8 +2525,8 @@ void OBSBasicSettings::LoadAdvancedSettings()
 
 	LoadRendererList();
 
-	if (obs_audio_monitoring_available() && !SetComboByValue(ui->monitoringDevice, monDevId.toUtf8()))
-		SetInvalidValue(ui->monitoringDevice, monDevName.toUtf8(), monDevId.toUtf8());
+	if (obs_audio_monitoring_available() && !SetComboByValue(ui->monitoringDevice, QT_TO_UTF8(monDevId)))
+		SetInvalidValue(ui->monitoringDevice, QT_TO_UTF8(monDevName), QT_TO_UTF8(monDevId));
 
 	ui->confirmOnExit->setChecked(confirmOnExit);
 
@@ -4508,7 +4508,7 @@ void OBSBasicSettings::AdvOutRecCheckCodecs()
 	QString recFormatName = ui->advOutRecFormat->currentText();
 
 	/* Set tooltip if available */
-	QString tooltip = QTStr("Basic.Settings.Output.Format.TT." + recFormat.toUtf8());
+	QString tooltip = QTStr(QT_TO_UTF8(QString("Basic.Settings.Output.Format.TT." + recFormat)));
 
 	if (!tooltip.startsWith("Basic.Settings.Output"))
 		ui->advOutRecFormat->setToolTip(tooltip);
@@ -5171,7 +5171,7 @@ void OBSBasicSettings::SimpleRecordingEncoderChanged()
 
 	QString format = ui->simpleOutRecFormat->currentData().toString();
 	/* Set tooltip if available */
-	QString tooltip = QTStr("Basic.Settings.Output.Format.TT." + format.toUtf8());
+	QString tooltip = QTStr(QT_TO_UTF8(QString("Basic.Settings.Output.Format.TT." + format)));
 
 	if (!tooltip.startsWith("Basic.Settings.Output"))
 		ui->simpleOutRecFormat->setToolTip(tooltip);

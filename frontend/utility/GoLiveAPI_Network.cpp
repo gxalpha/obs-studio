@@ -2,6 +2,7 @@
 #include "GoLiveAPI_CensoredJson.hpp"
 
 #include <OBSApp.hpp>
+#include <qt-wrappers.hpp>
 #include <utility/MultitrackVideoError.hpp>
 #include <utility/RemoteTextThread.hpp>
 
@@ -81,7 +82,7 @@ GoLiveApi::Config DownloadGoLiveConfig(QWidget *parent, QString url, const GoLiv
 
 	std::vector<std::string> headers;
 	headers.push_back("Content-Type: application/json");
-	bool encodeConfigDownloadedOk = GetRemoteFile(url.toLocal8Bit(), encodeConfigText,
+	bool encodeConfigDownloadedOk = GetRemoteFile(QT_TO_UTF8(url), encodeConfigText,
 						      libraryError, // out params
 						      nullptr,
 						      nullptr, // out params (response code and content type)

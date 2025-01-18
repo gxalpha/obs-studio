@@ -688,7 +688,7 @@ bool LoadBranchesFile(vector<UpdateBranch> &out)
 		goto fail;
 	}
 
-	branchesText = branchesFile.readAll();
+	branchesText = branchesFile.readAll().constData();
 	if (branchesText.empty()) {
 		error = "File empty.";
 		goto fail;

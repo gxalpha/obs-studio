@@ -83,7 +83,7 @@ static QString ReadWindowsURLFile(const QString &file)
 
 void OBSBasic::AddDropURL(const char *url, QString &name, obs_data_t *settings, const obs_video_info &ovi)
 {
-	QUrl path = QString::fromUtf8(url);
+	QUrl path = QUrl(QString::fromUtf8(url));
 	QUrlQuery query = QUrlQuery(path.query(QUrl::FullyEncoded));
 
 	int cx = (int)ovi.base_width;

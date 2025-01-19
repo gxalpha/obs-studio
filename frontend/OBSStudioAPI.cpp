@@ -319,7 +319,7 @@ void OBSStudioAPI::obs_frontend_add_tools_menu_item(const char *name, obs_fronte
 	};
 
 	QAction *action = main->ui->menuTools->addAction(QT_UTF8(name));
-	QObject::connect(action, &QAction::triggered, func);
+	QObject::connect(action, &QAction::triggered, action, func);
 }
 
 void *OBSStudioAPI::obs_frontend_add_dock(void *dock)

@@ -66,7 +66,7 @@ QWidget *MissingFilesPathItemDelegate::createEditor(QWidget *parent, const QStyl
 	browseButton->setSizePolicy(buttonSizePolicy);
 	layout->addWidget(browseButton);
 
-	container->connect(browseButton, &QToolButton::clicked, browseCallback);
+	container->connect(browseButton, &QToolButton::clicked, this, browseCallback);
 
 	// The "clear" button is not shown in input cells
 	if (isOutput) {
@@ -75,7 +75,7 @@ QWidget *MissingFilesPathItemDelegate::createEditor(QWidget *parent, const QStyl
 		clearButton->setSizePolicy(buttonSizePolicy);
 		layout->addWidget(clearButton);
 
-		container->connect(clearButton, &QToolButton::clicked, clearCallback);
+		container->connect(clearButton, &QToolButton::clicked, this, clearCallback);
 	}
 
 	container->setLayout(layout);

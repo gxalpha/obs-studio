@@ -18,23 +18,8 @@ set_target_properties(
   PROPERTIES AUTOMOC TRUE AUTOUIC TRUE AUTORCC TRUE AUTOGEN_PARALLEL AUTO
 )
 
-# Basically sets Qt strict mode, with some exceptions
 # https://doc.qt.io/qt-6/qtglobal.html#QT_ENABLE_STRICT_MODE_UP_TO
-target_compile_definitions(
-  obs-studio
-  PRIVATE
-    QT_NO_FOREACH
-    QT_NO_CAST_TO_ASCII
-    QT_NO_CAST_FROM_BYTEARRAY
-    QT_NO_URL_CAST_FROM_STRING
-    QT_NO_NARROWING_CONVERSIONS_IN_CONNECT
-    QT_NO_JAVA_STYLE_ITERATORS
-    QT_NO_QEXCHANGE
-    QT_NO_CONTEXTLESS_CONNECT
-    QT_NO_QASCONST
-    QT_USE_NODISCARD_FILE_OPEN
-    QT_NO_QSNPRINTF
-)
+target_compile_definitions(obs-studio PRIVATE QT_ENABLE_STRICT_MODE_UP_TO=0x070000)
 
 set_property(TARGET obs-studio APPEND PROPERTY AUTOUIC_SEARCH_PATHS forms forms/source-toolbar)
 

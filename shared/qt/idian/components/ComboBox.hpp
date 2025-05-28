@@ -1,5 +1,5 @@
 /******************************************************************************
-    Copyright (C) 2023 by Dennis Sädtler <dennis@obsproject.com>
+    Copyright (C) 2024 by Taylor Giampaolo <warchamp7@obsproject.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,31 +15,44 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#include "OBSDoubleSpinBox.hpp"
+#pragma once
 
-OBSDoubleSpinBox::OBSDoubleSpinBox(QWidget *parent) : QFrame(parent)
-{
-	layout = new QHBoxLayout();
-	setLayout(layout);
+#include <QComboBox>
+#include <QAbstractItemView>
 
-	layout->setContentsMargins(0, 0, 0, 0);
+#include "../OBSIdianWidget.hpp"
 
-	decr = new QPushButton("-");
-	decr->setObjectName("obsSpinBoxButton");
-	layout->addWidget(decr);
+namespace idian {
 
-	setFocusProxy(decr);
+class ComboBox : public QComboBox, public OBSIdianUtils {
+	Q_OBJECT
 
-	sbox = new QDoubleSpinBox();
-	sbox->setObjectName("obsSpinBox");
-	sbox->setButtonSymbols(QAbstractSpinBox::NoButtons);
-	sbox->setAlignment(Qt::AlignCenter);
-	layout->addWidget(sbox);
+public:
+	ComboBox(QWidget *parent = nullptr);
 
-	incr = new QPushButton("+");
-	incr->setObjectName("obsSpinBoxButton");
-	layout->addWidget(incr);
+public Q_SLOTS:
+	void togglePopup();
 
-	connect(decr, &QPushButton::pressed, sbox, &QDoubleSpinBox::stepDown);
-	connect(incr, &QPushButton::pressed, sbox, &QDoubleSpinBox::stepUp);
-}
+private:
+	bool allowOpeningPopup = true;
+
+protected:
+	void showPopup() override;
+	void hidePopup() override;
+
+	void mousePressEvent(QMouseEvent *event) override;
+
+	void focusInEvent(QFocusEvent *e) override
+	{
+		OBSIdianUtils::showKeyFocused(e);
+		QComboBox::focusInEvent(e);
+	}
+
+	void focusOutEvent(QFocusEvent *e) override
+	{
+		OBSIdianUtils::hideKeyFocused(e);
+		QComboBox::focusOutEvent(e);
+	}
+};
+
+} // namespace idian

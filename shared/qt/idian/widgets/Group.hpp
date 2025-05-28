@@ -22,9 +22,9 @@
 #include <QWidget>
 #include <QMouseEvent>
 
+#include "../components/ToggleSwitch.hpp"
 #include "Row.hpp"
 #include "PropertiesList.hpp"
-#include "../OBSToggleSwitch.hpp"
 
 namespace idian {
 
@@ -69,7 +69,7 @@ private:
 
 	PropertiesList *propertyList = nullptr;
 
-	OBSToggleSwitch *toggleSwitch = nullptr;
+	ToggleSwitch *toggleSwitch = nullptr;
 	bool checkable = false;
 };
 } // namespace idian

@@ -26,7 +26,7 @@ target_sources(
     OBSToggleSwitch.cpp
     OBSToggleSwitch.hpp
 )
-target_sources(idian PUBLIC include/obs-widgets.hpp)
+target_sources(idian PUBLIC include/Idian.hpp)
 
 set_target_properties(idian PROPERTIES AUTOMOC ON FOLDER "frontend")
 

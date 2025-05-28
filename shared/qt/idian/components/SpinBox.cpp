@@ -1,5 +1,5 @@
 /******************************************************************************
-    Copyright (C) 2024 by Taylor Giampaolo <warchamp7@obsproject.com>
+    Copyright (C) 2023 by Dennis Sädtler <dennis@obsproject.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,40 +15,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#pragma once
+#include "moc_SpinBox.cpp"
 
-#include <QComboBox>
-#include <QAbstractItemView>
+using idian::SpinBox;
 
-#include "OBSIdianWidget.hpp"
+SpinBox::SpinBox(QWidget *parent) : QFrame(parent)
+{
+	layout = new QHBoxLayout();
+	setLayout(layout);
 
-class OBSComboBox : public QComboBox, public OBSIdianUtils {
-	Q_OBJECT
+	layout->setContentsMargins(0, 0, 0, 0);
 
-public:
-	OBSComboBox(QWidget *parent = nullptr);
+	decr = new QPushButton("-");
+	decr->setObjectName("obsSpinBoxButton");
+	layout->addWidget(decr);
 
-public Q_SLOTS:
-	void togglePopup();
+	sbox = new QSpinBox();
+	sbox->setObjectName("obsSpinBox");
+	sbox->setButtonSymbols(QAbstractSpinBox::NoButtons);
+	layout->addWidget(sbox);
 
-private:
-	bool allowOpeningPopup = true;
+	incr = new QPushButton("+");
+	incr->setObjectName("obsSpinBoxButton");
+	layout->addWidget(incr);
 
-protected:
-	void showPopup() override;
-	void hidePopup() override;
-
-	void mousePressEvent(QMouseEvent *event) override;
-
-	void focusInEvent(QFocusEvent *e) override
-	{
-		OBSIdianUtils::showKeyFocused(e);
-		QComboBox::focusInEvent(e);
-	}
-
-	void focusOutEvent(QFocusEvent *e) override
-	{
-		OBSIdianUtils::hideKeyFocused(e);
-		QComboBox::focusOutEvent(e);
-	}
-};
+	connect(decr, &QPushButton::pressed, sbox, &QSpinBox::stepDown);
+	connect(incr, &QPushButton::pressed, sbox, &QSpinBox::stepUp);
+}

@@ -17,7 +17,7 @@
 
 #include <QTimer>
 
-#include <obs-widgets.hpp>
+#include <Idian.hpp>
 #include "OBSIdianPlayground.hpp"
 
 // This file is a temporary playground for building new widgets,

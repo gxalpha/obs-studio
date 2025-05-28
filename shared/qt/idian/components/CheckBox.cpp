@@ -1,5 +1,5 @@
 /******************************************************************************
-    Copyright (C) 2023 by Dennis Sädtler <dennis@obsproject.com>
+    Copyright (C) 2024 by Taylor Giampaolo <warchamp7@obsproject.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,24 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ******************************************************************************/
 
-#pragma once
+#include "moc_CheckBox.cpp"
 
-#include <QFrame>
-#include <QLayout>
-#include <QSpinBox>
-#include <QPushButton>
+using idian::CheckBox;
 
-class OBSSpinBox : public QFrame {
-	Q_OBJECT;
-
-public:
-	OBSSpinBox(QWidget *parent = nullptr);
-
-	QSpinBox *spinBox() const { return sbox; }
-
-private:
-	QHBoxLayout *layout;
-	QPushButton *decr;
-	QPushButton *incr;
-	QSpinBox *sbox;
-};
+CheckBox::CheckBox(QWidget *parent) : QCheckBox(parent), OBSIdianUtils(this) {}

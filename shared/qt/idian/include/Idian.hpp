@@ -23,11 +23,11 @@
 * (OBS Idian, get it?)
 */
 
-#include "../OBSCheckBox.hpp"
-#include "../OBSComboBox.hpp"
-#include "../OBSDoubleSpinBox.hpp"
-#include "../OBSSpinBox.hpp"
-#include "../OBSToggleSwitch.hpp"
+#include "../components/CheckBox.hpp"
+#include "../components/ComboBox.hpp"
+#include "../components/DoubleSpinBox.hpp"
+#include "../components/SpinBox.hpp"
+#include "../components/ToggleSwitch.hpp"
 #include "../widgets/Group.hpp"
 #include "../widgets/PropertiesList.hpp"
 #include "../widgets/Row.hpp"

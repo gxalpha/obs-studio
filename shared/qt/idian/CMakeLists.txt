@@ -8,17 +8,17 @@ add_library(OBS::idian ALIAS idian)
 target_sources(
   idian
   PRIVATE
-    OBSCheckBox.cpp
-    OBSCheckBox.hpp
-    OBSComboBox.cpp
-    OBSComboBox.hpp
-    OBSDoubleSpinBox.cpp
-    OBSDoubleSpinBox.hpp
+    components/CheckBox.cpp
+    components/CheckBox.hpp
+    components/ComboBox.cpp
+    components/ComboBox.hpp
+    components/DoubleSpinBox.cpp
+    components/DoubleSpinBox.hpp
+    components/SpinBox.cpp
+    components/SpinBox.hpp
+    components/ToggleSwitch.cpp
+    components/ToggleSwitch.hpp
     OBSIdianWidget.hpp
-    OBSSpinBox.cpp
-    OBSSpinBox.hpp
-    OBSToggleSwitch.cpp
-    OBSToggleSwitch.hpp
     widgets/Group.cpp
     widgets/Group.hpp
     widgets/PropertiesList.cpp

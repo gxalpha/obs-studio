@@ -26,10 +26,10 @@
 #include <QCheckBox>
 
 #include "../OBSIdianWidget.hpp"
-#include "../OBSToggleSwitch.hpp"
-#include "../OBSComboBox.hpp"
-#include "../OBSSpinBox.hpp"
-#include "../OBSDoubleSpinBox.hpp"
+#include "../components/ToggleSwitch.hpp"
+#include "../components/ComboBox.hpp"
+#include "../components/SpinBox.hpp"
+#include "../components/DoubleSpinBox.hpp"
 #include "PropertiesList.hpp"
 
 namespace idian {
@@ -204,7 +204,7 @@ private:
 	ExpandButton *expandButton;
 	PropertiesList *propertyList;
 
-	OBSToggleSwitch *toggleSwitch = nullptr;
+	ToggleSwitch *toggleSwitch = nullptr;
 	bool checkable = false;
 };
 

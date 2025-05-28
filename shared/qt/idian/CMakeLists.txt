@@ -18,13 +18,13 @@ target_sources(
     components/SpinBox.hpp
     components/ToggleSwitch.cpp
     components/ToggleSwitch.hpp
-    OBSIdianWidget.hpp
     widgets/Group.cpp
     widgets/Group.hpp
     widgets/PropertiesList.cpp
     widgets/PropertiesList.hpp
     widgets/Row.cpp
     widgets/Row.hpp
+    Utils.hpp
 )
 target_sources(idian PUBLIC include/Idian.hpp)
 

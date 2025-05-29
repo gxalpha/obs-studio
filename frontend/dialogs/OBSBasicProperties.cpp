@@ -20,6 +20,7 @@
 #include <utility/display-helpers.hpp>
 #include <widgets/OBSBasic.hpp>
 
+#include <PropertiesView.hpp>
 #include <properties-view.hpp>
 #include <qt-wrappers.hpp>
 #include <vertical-scroll-area.hpp>
@@ -68,15 +69,17 @@ OBSBasicProperties::OBSBasicProperties(QWidget *parent, OBSSource source_)
 	OBSDataAutoRelease nd_settings = obs_source_get_settings(source);
 	obs_data_apply(oldSettings, nd_settings);
 
-	view = new OBSPropertiesView(nd_settings.Get(), source, (PropertiesReloadCallback)obs_source_properties,
-				     (PropertiesUpdateCallback) nullptr, // No special handling required for undo/redo
-				     (PropertiesVisualUpdateCb)obs_source_update);
+	using properties_view::PropertiesView;
+	view = new PropertiesView([this]() { return obs_source_properties(source); },
+				  [this]() { return obs_source_get_settings(source); }, this);
+	connect(view, &PropertiesView::settingsChanged, this,
+		[this](obs_data_t *settings) { obs_source_update(source, settings); });
 	view->setMinimumHeight(150);
 
 	ui->propertiesLayout->addWidget(view);
 
 	if (type == OBS_SOURCE_TYPE_TRANSITION) {
-		connect(view, &OBSPropertiesView::PropertiesRefreshed, this, &OBSBasicProperties::AddPreviewButton);
+		connect(view, &PropertiesView::propertiesRefreshed, this, &OBSBasicProperties::AddPreviewButton);
 	}
 
 	view->show();
@@ -128,8 +131,7 @@ OBSBasicProperties::OBSBasicProperties(QWidget *parent, OBSSource source_)
 		obs_source_inc_active(sourceClone);
 		obs_transition_set(sourceClone, sourceA);
 
-		auto updateCallback = [=]() {
-			OBSDataAutoRelease settings = obs_source_get_settings(source);
+		connect(view, &PropertiesView::settingsChanged, [=](obs_data_t *settings) {
 			obs_source_update(sourceClone, settings);
 
 			obs_transition_clear(sourceClone);
@@ -137,9 +139,7 @@ OBSBasicProperties::OBSBasicProperties(QWidget *parent, OBSSource source_)
 			obs_transition_force_stop(sourceClone);
 
 			direction = true;
-		};
-
-		connect(view, &OBSPropertiesView::Changed, updateCallback);
+		});
 
 		ui->preview->show();
 		connect(ui->preview, &OBSQTDisplay::DisplayCreated, addTransitionDrawCallback);

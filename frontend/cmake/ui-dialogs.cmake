@@ -10,6 +10,15 @@ endif()
 
 target_link_libraries(obs-studio PRIVATE OBS::properties-view)
 
+if(NOT TARGET OBS::properties-view-idian)
+  add_subdirectory(
+    "${CMAKE_SOURCE_DIR}/shared/properties-view-idian"
+    "${CMAKE_BINARY_DIR}/shared/properties-view-idian"
+  )
+endif()
+
+target_link_libraries(obs-studio PRIVATE OBS::properties-view-idian)
+
 target_sources(
   obs-studio
   PRIVATE

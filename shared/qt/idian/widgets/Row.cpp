@@ -304,7 +304,6 @@ CollapsibleRow::CollapsibleRow(QWidget *parent) : GenericRow(parent)
 	actionRow->setFocusProxy(expandButton);
 
 	connect(expandButton, &QAbstractButton::clicked, this, &CollapsibleRow::toggleVisibility);
-
 	connect(actionRow, &Row::clicked, expandButton, &QAbstractButton::click);
 }
 
@@ -320,6 +319,7 @@ void CollapsibleRow::setCheckable(bool check)
 
 		actionRow->setSuffix(toggleSwitch, false);
 		connect(toggleSwitch, &ToggleSwitch::toggled, propertyList, &PropertiesList::setEnabled);
+		connect(toggleSwitch, &ToggleSwitch::toggled, this, &CollapsibleRow::toggled);
 	}
 
 	if (!checkable && toggleSwitch) {
@@ -328,6 +328,15 @@ void CollapsibleRow::setCheckable(bool check)
 
 		actionRow->suffix()->deleteLater();
 	}
+}
+
+void CollapsibleRow::setChecked(bool checked)
+{
+	if (!isCheckable()) {
+		throw std::logic_error("Called setChecked on a non-checkable row.");
+	}
+
+	toggleSwitch->setChecked(checked);
 }
 
 void CollapsibleRow::setTitle(const QString &name)

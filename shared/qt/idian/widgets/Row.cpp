@@ -29,7 +29,7 @@ namespace idian {
 Row::Row(QWidget *parent) : GenericRow(parent)
 {
 	layout = new QGridLayout(this);
-	layout->setVerticalSpacing(0);
+	layout->setHorizontalSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 
 	labelLayout = new QVBoxLayout();
@@ -40,9 +40,10 @@ Row::Row(QWidget *parent) : GenericRow(parent)
 	setLayout(layout);
 
 	layout->setColumnMinimumWidth(0, 0);
+	layout->setColumnStretch(0, 1);
 	layout->setColumnStretch(0, 0);
-	layout->setColumnStretch(1, 40);
-	layout->setColumnStretch(2, 55);
+	layout->setColumnStretch(2, 100);
+	layout->setColumnStretch(3, 1);
 
 	nameLabel = new QLabel();
 	nameLabel->setVisible(false);
@@ -55,7 +56,7 @@ Row::Row(QWidget *parent) : GenericRow(parent)
 	labelLayout->addWidget(nameLabel);
 	labelLayout->addWidget(descriptionLabel);
 
-	layout->addLayout(labelLayout, 0, 1, Qt::AlignLeft);
+	layout->addLayout(labelLayout, 0, 2, Qt::AlignLeft);
 }
 
 void Row::setPrefix(QWidget *w, bool auto_connect)
@@ -69,7 +70,8 @@ void Row::setPrefix(QWidget *w, bool auto_connect)
 
 	prefix_->setParent(this);
 	layout->addWidget(prefix_, 0, 0, Qt::AlignLeft);
-	layout->setColumnStretch(0, 3);
+	layout->setColumnStretch(0, 4);
+	setPrefixEnabled(true);
 }
 
 void Row::setSuffix(QWidget *w, bool auto_connect)
@@ -82,7 +84,8 @@ void Row::setSuffix(QWidget *w, bool auto_connect)
 		this->connectBuddyWidget(w);
 
 	suffix_->setParent(this);
-	layout->addWidget(suffix_, 0, 2, Qt::AlignRight | Qt::AlignVCenter);
+	layout->addWidget(suffix_, 0, 3, Qt::AlignRight | Qt::AlignVCenter);
+	setSuffixEnabled(true);
 }
 
 void Row::setPrefixEnabled(bool enabled)
@@ -94,9 +97,16 @@ void Row::setPrefixEnabled(bool enabled)
 	if (enabled == prefix_->isEnabled() && enabled == prefix_->isVisible())
 		return;
 
-	layout->setColumnStretch(0, enabled ? 3 : 0);
+	layout->setColumnStretch(0, enabled ? 4 : 0);
 	prefix_->setEnabled(enabled);
 	prefix_->setVisible(enabled);
+
+	QLayoutItem *spacer = layout->itemAtPosition(0, 1);
+	if (enabled && !spacer) {
+		layout->addItem(new QSpacerItem(10, 1), 0, 1);
+	} else if (!enabled && spacer) {
+		layout->removeItem(spacer);
+	}
 }
 
 void Row::setSuffixEnabled(bool enabled)
@@ -110,6 +120,20 @@ void Row::setSuffixEnabled(bool enabled)
 
 	suffix_->setEnabled(enabled);
 	suffix_->setVisible(enabled);
+}
+
+void Row::setLargeContent(QWidget *widget, bool autoConnect)
+{
+	largeContent_ = widget;
+	largeContent_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+	if (autoConnect)
+		this->connectBuddyWidget(widget);
+
+	largeContent_->setParent(this);
+	layout->addWidget(largeContent_, 1, 0, 1, 4);
+
+	// TODO: Toggle functions to enable/disable like prefix/suffix
 }
 
 void Row::setTitle(const QString &name)
@@ -231,6 +255,8 @@ void Row::connectBuddyWidget(QWidget *widget)
 		connect(this, &Row::clicked, obsCombo, &ComboBox::togglePopup);
 		return;
 	}
+
+	/* If element is a LineEdit/TextEdit, no special handling is needed. */
 }
 
 // Button for expanding a collapsible ActionRow

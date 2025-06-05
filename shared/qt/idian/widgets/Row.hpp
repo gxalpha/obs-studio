@@ -58,12 +58,15 @@ public:
 
 	void setPrefix(QWidget *w, bool autoConnect = true);
 	void setSuffix(QWidget *w, bool autoConnect = true);
+	void setLargeContent(QWidget *widget, bool autoConnect = true);
 
 	bool hasPrefix() { return _prefix; }
 	bool hasSuffix() { return _suffix; }
+	bool hasLargeContent() { return largeContent_; }
 
 	QWidget *prefix() const { return _prefix; }
 	QWidget *suffix() const { return _suffix; }
+	QWidget *largeContent() const { return largeContent_; }
 
 	void setPrefixEnabled(bool enabled);
 	void setSuffixEnabled(bool enabled);
@@ -110,6 +113,7 @@ private:
 
 	QWidget *_prefix = nullptr;
 	QWidget *_suffix = nullptr;
+	QWidget *largeContent_ = nullptr;
 
 	QWidget *buddyWidget = nullptr;
 

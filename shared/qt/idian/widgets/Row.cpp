@@ -27,7 +27,6 @@ using namespace idian;
 Row::Row(QWidget *parent) : GenericRow(parent)
 {
 	layout = new QGridLayout(this);
-	layout->setVerticalSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
 
 	labelLayout = new QVBoxLayout();
@@ -38,9 +37,9 @@ Row::Row(QWidget *parent) : GenericRow(parent)
 	setLayout(layout);
 
 	layout->setColumnMinimumWidth(0, 0);
-	layout->setColumnStretch(0, 0);
-	layout->setColumnStretch(1, 40);
-	layout->setColumnStretch(2, 55);
+	layout->setColumnStretch(0, 1);
+	layout->setColumnStretch(1, 100);
+	layout->setColumnStretch(2, 1);
 
 	nameLabel = new QLabel();
 	nameLabel->setVisible(false);
@@ -108,6 +107,21 @@ void Row::setSuffixEnabled(bool enabled)
 
 	_suffix->setEnabled(enabled);
 	_suffix->setVisible(enabled);
+}
+
+void Row::setLargeContent(QWidget *widget, bool autoConnect)
+{
+	largeContent_ = widget;
+	largeContent_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+	if (autoConnect)
+		this->connectBuddyWidget(widget);
+
+	largeContent_->setParent(this);
+	layout->addWidget(largeContent_, 1, 1);
+	//layout->addWidget(largeContent_, 1, 0, 1, 3); // TODO: Maybe set horizontal spacing to 0 and introduce manual spacing for prefix/suffix
+
+	// TODO: Toggle functions to enable/disable like prefix/suffix
 }
 
 void Row::setTitle(const QString &name)
@@ -231,6 +245,8 @@ void Row::connectBuddyWidget(QWidget *widget)
 		connect(this, &Row::clicked, obsCombo, &ComboBox::togglePopup);
 		return;
 	}
+
+	/* If element is a LineEdit/TextEdit, no special handling is needed. */
 }
 
 /*

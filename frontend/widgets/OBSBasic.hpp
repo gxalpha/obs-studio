@@ -53,6 +53,7 @@ class OBSBasicTransform;
 class OBSLogViewer;
 class OBSMissingFiles;
 class OBSProjector;
+class OBSSceneCollections;
 class VolControl;
 #ifdef YOUTUBE_ENABLED
 class YouTubeAppDock;
@@ -205,6 +206,7 @@ class OBSBasic : public OBSMainWindow {
 	friend class OBSBasicStatusBar;
 	friend class OBSBasicSourceSelect;
 	friend class OBSBasicSettings;
+	friend class OBSSceneCollections; //TODO: This needs fixing.
 	friend class Auth;
 	friend class AutoConfig;
 	friend class AutoConfigStreamPage;
@@ -542,6 +544,7 @@ private:
 	QPointer<OBSBasicFilters> filters;
 	QPointer<OBSAbout> about;
 	QPointer<OBSLogViewer> logView;
+	QPointer<OBSSceneCollections> sceneCollectionsDialog;
 	QPointer<QWidget> stats;
 	QPointer<QWidget> remux;
 	QPointer<QWidget> importer;
@@ -1058,7 +1061,6 @@ private:
 	void RemoveSceneCollection(SceneCollection collection);
 
 	bool CreateDuplicateSceneCollection(const QString &name);
-	void DeleteSceneCollection(const QString &name);
 	void SceneCollectionActionTriggered();
 
 	void RefreshSceneCollectionCache();
@@ -1078,12 +1080,7 @@ public slots:
 private slots:
 	void on_actionShowMissingFiles_triggered();
 
-	void on_actionNewSceneCollection_triggered();
-	void on_actionDupSceneCollection_triggered();
-	void on_actionRenameSceneCollection_triggered();
-	void on_actionRemoveSceneCollection_triggered(bool skipConfirmation = false);
-	void on_actionImportSceneCollection_triggered();
-	void on_actionExportSceneCollection_triggered();
+	void on_actionManageSceneCollections_triggered();
 	void on_actionRemigrateSceneCollection_triggered();
 
 public:

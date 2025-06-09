@@ -275,6 +275,18 @@
     background-color: var(--bg_base);
 }
 
+.bg-danger {
+    background-color: var(--danger);
+}
+
+.bg-danger:hover {
+    background-color: var(--red2);
+}
+
+.bg-danger:disabled {
+    background-color: var(--red5);
+}
+
 .text-title {
     font-size: var(--font_large);
     font-weight: bold;
@@ -445,6 +457,18 @@
 
 .icon-close {
     qproperty-icon: url(theme:Dark/close.svg);
+}
+
+.icon-check-round-outline {
+    qproperty-icon: url(theme:Yami/check_round_outline.svg);
+}
+
+.icon-vertical-arrows-updown {
+    qproperty-icon: url(theme:Yami/vertical_arrows_updown.svg);
+}
+
+.icon-checkmark {
+    qproperty-icon: url(theme:Yami/checkmark.svg);
 }
 
 /* Media icons */

@@ -18,6 +18,18 @@
     background-color: #DCD9D7;
 }
 
+.bg-danger {
+    background-color: rgb(189,47,73);
+}
+
+.bg-danger:hover {
+    background-color: rgb(206, 51, 74);
+}
+
+.bg-danger:disabled {
+    background-color: rgb(112,39,53);
+}
+
 .text-heading {
     font-size: 36px;
     font-weight: bold;
@@ -82,6 +94,18 @@
 
 .icon-revert {
     qproperty-icon: url(:res/images/revert.svg);
+}
+
+.icon-check-round-outline {
+    qproperty-icon: url(:res/images/check_round_outline.svg);
+}
+
+.icon-vertical-arrows-updown {
+    qproperty-icon: url(:res/images/vertical_arrows_updown.svg);
+}
+
+.icon-checkmark {
+    qproperty-icon: url(:rest/images/checkmark.svg);
 }
 
 .indicator-mute {

@@ -32,6 +32,7 @@
 #include <dialogs/OBSPermissions.hpp>
 #endif
 #include <dialogs/OBSRemux.hpp>
+#include <dialogs/OBSSceneCollections.hpp>
 #include <settings/OBSBasicSettings.hpp>
 #ifdef _WIN32
 #include <utility/AutoUpdateThread.hpp>
@@ -134,7 +135,11 @@ void OBSBasic::CloseDialogs()
 	QList<QDialog *> childDialogs = this->findChildren<QDialog *>();
 	if (!childDialogs.isEmpty()) {
 		for (int i = 0; i < childDialogs.size(); ++i) {
-			childDialogs.at(i)->close();
+			QDialog *dialog = childDialogs.at(i);
+			if (dialog == sceneCollectionsDialog.data()) {
+				continue;
+			}
+			dialog->close();
 		}
 	}
 

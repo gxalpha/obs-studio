@@ -9,6 +9,8 @@ target_sources(
     utility/BasicOutputHandler.cpp
     utility/BasicOutputHandler.hpp
     utility/display-helpers.hpp
+    utility/DoubleClickEventFilter.cpp
+    utility/DoubleClickEventFilter.hpp
     utility/FFmpegCodec.cpp
     utility/FFmpegCodec.hpp
     utility/FFmpegFormat.cpp

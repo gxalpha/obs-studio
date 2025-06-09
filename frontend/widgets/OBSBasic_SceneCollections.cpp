@@ -57,27 +57,6 @@ static constexpr std::string_view Remigrate = "Basic.MainMenu.SceneCollection.Re
 
 // MARK: - Anonymous Namespace
 namespace {
-QList<QString> sortedSceneCollections{};
-
-void updateSortedSceneCollections(const OBSSceneCollectionCache &collections)
-{
-	const QLocale locale = QLocale::system();
-	QList<QString> newList{};
-
-	for (auto [collectionName, _] : collections) {
-		QString entry = QString::fromStdString(collectionName);
-		newList.append(entry);
-	}
-
-	std::sort(newList.begin(), newList.end(), [&locale](const QString &lhs, const QString &rhs) -> bool {
-		int result = QString::localeAwareCompare(locale.toLower(lhs), locale.toLower(rhs));
-
-		return (result < 0);
-	});
-
-	sortedSceneCollections.swap(newList);
-}
-
 void cleanBackupCollision(const SceneCollection &collection)
 {
 	std::filesystem::path backupFilePath = collection.getFilePath();
@@ -390,29 +369,20 @@ void OBSBasic::RefreshSceneCollections(bool refreshCache)
 		RefreshSceneCollectionCache();
 	}
 
-	updateSortedSceneCollections(collections);
-
 	size_t numAddedCollections = 0;
-	for (auto &name : sortedSceneCollections) {
-		const std::string collectionName = name.toStdString();
-		try {
-			const SceneCollection &collection = collections.at(collectionName);
-			const QString qCollectionName = QString().fromStdString(collectionName);
+	for (auto collectionRefWrapper : GetSceneCollectionsSorted()) {
+		auto collection = collectionRefWrapper.get();
+		auto qCollectionName = QString::fromStdString(collection.getName());
+		QAction *action = new QAction(qCollectionName, this);
+		action->setProperty("collection_name", qCollectionName);
+		action->setProperty("file_name", QString().fromStdString(collection.getFileName()));
+		connect(action, &QAction::triggered, this, &OBSBasic::ChangeSceneCollection);
+		action->setCheckable(true);
+		action->setChecked(collection.getName() == currentCollectionName);
 
-			QAction *action = new QAction(qCollectionName, this);
-			action->setProperty("collection_name", qCollectionName);
-			action->setProperty("file_name", QString().fromStdString(collection.getFileName()));
-			connect(action, &QAction::triggered, this, &OBSBasic::ChangeSceneCollection);
-			action->setCheckable(true);
-			action->setChecked(collectionName == currentCollectionName);
+		ui->sceneCollectionMenu->addAction(action);
 
-			ui->sceneCollectionMenu->addAction(action);
-
-			numAddedCollections += 1;
-		} catch (const std::out_of_range &error) {
-			blog(LOG_ERROR, "No scene collection with name %s found in scene collection cache.\n%s",
-			     collectionName.c_str(), error.what());
-		}
+		numAddedCollections += 1;
 	}
 
 	ui->actionRemoveSceneCollection->setEnabled(numAddedCollections > 1);
@@ -463,6 +433,22 @@ void OBSBasic::RefreshSceneCollectionCache()
 	}
 
 	collections.swap(foundCollections);
+}
+
+std::vector<std::reference_wrapper<OBS::SceneCollection>> OBSBasic::GetSceneCollectionsSorted() noexcept
+{
+	std::vector<std::reference_wrapper<OBS::SceneCollection>> sorted;
+	sorted.reserve(collections.size());
+	for (auto &[name, collection] : collections) {
+		sorted.emplace_back(collection);
+	}
+	const QLocale locale = QLocale::system();
+	std::sort(sorted.begin(), sorted.end(), [&](const OBS::SceneCollection &lhs, const OBS::SceneCollection &rhs) {
+		const QString left = QString::fromStdString(lhs.getName());
+		const QString right = QString::fromStdString(rhs.getName());
+		return QString::localeAwareCompare(locale.toLower(left), locale.toLower(right)) < 0;
+	});
+	return sorted;
 }
 
 SceneCollection &OBSBasic::GetCurrentSceneCollection()

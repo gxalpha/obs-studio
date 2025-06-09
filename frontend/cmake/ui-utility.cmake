@@ -11,6 +11,8 @@ target_sources(
     utility/CrashHandler.cpp
     utility/CrashHandler.hpp
     utility/display-helpers.hpp
+    utility/DoubleClickEventFilter.cpp
+    utility/DoubleClickEventFilter.hpp
     utility/FFmpegCodec.cpp
     utility/FFmpegCodec.hpp
     utility/FFmpegFormat.cpp

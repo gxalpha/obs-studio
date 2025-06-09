@@ -315,7 +315,7 @@ void OBSBasic::DeleteSceneCollection(const QString &name)
 	OnEvent(OBS_FRONTEND_EVENT_SCENE_COLLECTION_LIST_CHANGED);
 }
 
-void OBSBasic::ChangeSceneCollection()
+void OBSBasic::SceneCollectionActionTriggered()
 {
 	QAction *action = reinterpret_cast<QAction *>(sender());
 
@@ -342,13 +342,17 @@ void OBSBasic::ChangeSceneCollection()
 	}
 
 	SceneCollection &selectedCollection = foundCollection.value();
+	SetCurrentSceneCollection(selectedCollection);
+}
 
+void OBSBasic::SetCurrentSceneCollection(SceneCollection &newCollection)
+{
 	OnEvent(OBS_FRONTEND_EVENT_SCENE_COLLECTION_CHANGING);
 
-	ActivateSceneCollection(selectedCollection);
+	ActivateSceneCollection(newCollection);
 
-	blog(LOG_INFO, "Switched to scene collection '%s' (%s)", selectedCollection.getName().c_str(),
-	     selectedCollection.getFileName().c_str());
+	blog(LOG_INFO, "Switched to scene collection '%s' (%s)", newCollection.getName().c_str(),
+	     newCollection.getFileName().c_str());
 	blog(LOG_INFO, "------------------------------------------------");
 }
 
@@ -376,7 +380,7 @@ void OBSBasic::RefreshSceneCollections(bool refreshCache)
 		QAction *action = new QAction(qCollectionName, this);
 		action->setProperty("collection_name", qCollectionName);
 		action->setProperty("file_name", QString().fromStdString(collection.getFileName()));
-		connect(action, &QAction::triggered, this, &OBSBasic::ChangeSceneCollection);
+		connect(action, &QAction::triggered, this, &OBSBasic::SceneCollectionActionTriggered);
 		action->setCheckable(true);
 		action->setChecked(collection.getName() == currentCollectionName);
 

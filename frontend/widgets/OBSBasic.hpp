@@ -1059,7 +1059,7 @@ private:
 
 	bool CreateDuplicateSceneCollection(const QString &name);
 	void DeleteSceneCollection(const QString &name);
-	void ChangeSceneCollection();
+	void SceneCollectionActionTriggered();
 
 	void RefreshSceneCollectionCache();
 
@@ -1093,6 +1093,7 @@ public:
 	std::vector<std::reference_wrapper<OBS::SceneCollection>> GetSceneCollectionsSorted() noexcept;
 
 	SceneCollection &GetCurrentSceneCollection();
+	void SetCurrentSceneCollection(SceneCollection &collection);
 
 	std::optional<SceneCollection> GetSceneCollectionByName(const std::string &collectionName) const;
 	std::optional<SceneCollection> GetSceneCollectionByFileName(const std::string &fileName) const;

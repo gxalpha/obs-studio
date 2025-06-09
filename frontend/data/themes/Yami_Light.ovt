@@ -279,6 +279,18 @@ OBSBasic {
     qproperty-icon: url(theme:Light/save.svg);
 }
 
+.icon-check-round-outline {
+    qproperty-icon: url(theme:Light/check_round_outline.svg);
+}
+
+.icon-vertical-arrows-updown {
+    qproperty-icon: url(theme:Light/vertical_arrows_updown.svg);
+}
+
+.icon-checkmark {
+    qproperty-icon: url(theme:Light/checkmark.svg);
+}
+
 /* Media icons */
 .icon-media-play {
     qproperty-icon: url(theme:Light/media/media_play.svg);

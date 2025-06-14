@@ -2040,47 +2040,6 @@ void OBSBasic::OnEvent(enum obs_frontend_event event)
 		api->on_event(event);
 }
 
-OBSPromptResult OBSBasic::PromptForName(const OBSPromptRequest &request, const OBSPromptCallback &callback)
-{
-	OBSPromptResult result;
-
-	for (;;) {
-		result.success = false;
-
-		if (request.withOption && !request.optionPrompt.empty()) {
-			result.optionValue = request.optionValue;
-
-			result.success = NameDialog::AskForNameWithOption(
-				this, request.title.c_str(), request.prompt.c_str(), result.promptValue,
-				request.optionPrompt.c_str(), result.optionValue,
-				(request.promptValue.empty() ? nullptr : request.promptValue.c_str()));
-
-		} else {
-			result.success = NameDialog::AskForName(
-				this, request.title.c_str(), request.prompt.c_str(), result.promptValue,
-				(request.promptValue.empty() ? nullptr : request.promptValue.c_str()));
-		}
-
-		if (!result.success) {
-			break;
-		}
-
-		if (result.promptValue.empty()) {
-			OBSMessageBox::warning(this, QTStr("NoNameEntered.Title"), QTStr("NoNameEntered.Text"));
-			continue;
-		}
-
-		if (!callback(result)) {
-			OBSMessageBox::warning(this, QTStr("NameExists.Title"), QTStr("NameExists.Text"));
-			continue;
-		}
-
-		break;
-	}
-
-	return result;
-}
-
 void OBSBasic::on_actionOpenPluginManager_triggered()
 {
 	App()->pluginManagerOpenDialog();

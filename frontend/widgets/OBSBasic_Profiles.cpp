@@ -21,6 +21,7 @@
 #include <docks/YouTubeAppDock.hpp>
 #endif
 #include <wizards/AutoConfig.hpp>
+#include <dialogs/NameDialog.hpp>
 
 #include <qt-wrappers.hpp>
 
@@ -429,7 +430,7 @@ void OBSBasic::on_actionNewProfile_triggered()
 	const OBSPromptRequest request{Str("AddProfile.Title"),          Str("AddProfile.Text"), "", true,
 				       Str("AddProfile.WizardCheckbox"), useProfileWizard};
 
-	OBSPromptResult result = PromptForName(request, profilePromptCallback);
+	OBSPromptResult result = NameDialog::PromptForName(this, request, profilePromptCallback);
 
 	if (!result.success) {
 		return;
@@ -456,7 +457,7 @@ void OBSBasic::on_actionDupProfile_triggered()
 
 	const OBSPromptRequest request{Str("AddProfile.Title"), Str("AddProfile.Text")};
 
-	OBSPromptResult result = PromptForName(request, profilePromptCallback);
+	OBSPromptResult result = NameDialog::PromptForName(this, request, profilePromptCallback);
 
 	if (!result.success) {
 		return;
@@ -485,7 +486,7 @@ void OBSBasic::on_actionRenameProfile_triggered()
 
 	const OBSPromptRequest request{Str("RenameProfile.Title"), Str("AddProfile.Text"), currentProfileName};
 
-	OBSPromptResult result = PromptForName(request, profilePromptCallback);
+	OBSPromptResult result = NameDialog::PromptForName(this, request, profilePromptCallback);
 
 	if (!result.success) {
 		return;

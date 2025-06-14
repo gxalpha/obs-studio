@@ -23,6 +23,7 @@
 #include <utility/item-widget-helpers.hpp>
 
 #include <qt-wrappers.hpp>
+#include <dialogs/NameDialog.hpp>
 
 #include <QDir>
 
@@ -518,7 +519,7 @@ void OBSBasic::on_actionNewSceneCollection_triggered()
 	const OBSPromptRequest request{Str("Basic.Main.AddSceneCollection.Title"),
 				       Str("Basic.Main.AddSceneCollection.Text")};
 
-	OBSPromptResult result = PromptForName(request, sceneCollectionCallback);
+	OBSPromptResult result = NameDialog::PromptForName(this, request, sceneCollectionCallback);
 
 	if (!result.success) {
 		return;
@@ -546,7 +547,7 @@ void OBSBasic::on_actionDupSceneCollection_triggered()
 	const OBSPromptRequest request{Str("Basic.Main.AddSceneCollection.Title"),
 				       Str("Basic.Main.AddSceneCollection.Text")};
 
-	OBSPromptResult result = PromptForName(request, sceneCollectionCallback);
+	OBSPromptResult result = NameDialog::PromptForName(this, request, sceneCollectionCallback);
 
 	if (!result.success) {
 		return;
@@ -576,7 +577,7 @@ void OBSBasic::on_actionRenameSceneCollection_triggered()
 	const OBSPromptRequest request{Str("Basic.Main.RenameSceneCollection.Title"),
 				       Str("Basic.Main.AddSceneCollection.Text"), currentCollection.getName()};
 
-	OBSPromptResult result = PromptForName(request, sceneCollectionCallback);
+	OBSPromptResult result = NameDialog::PromptForName(this, request, sceneCollectionCallback);
 
 	if (!result.success) {
 		return;

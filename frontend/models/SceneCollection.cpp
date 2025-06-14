@@ -17,6 +17,10 @@
 
 #include "SceneCollection.hpp"
 
+#include <sys/stat.h>
+
+#include <util/platform.h>
+
 static constexpr std::string_view invalidCoordinateMode = "Invalid coordinate mode provided";
 
 namespace OBS {
@@ -43,6 +47,15 @@ std::filesystem::path SceneCollection::getFilePath() const
 std::string SceneCollection::getFilePathString() const
 {
 	return filePath_.u8string();
+}
+
+std::chrono::time_point<std::chrono::system_clock> SceneCollection::getLastUsedTime() const
+{
+	struct stat stats;
+	if (os_stat(filePath_.string().c_str(), &stats) != 0)
+		stats.st_mtime = 0;
+
+	return std::chrono::system_clock::from_time_t(stats.st_mtime);
 }
 
 SceneCoordinateMode SceneCollection::getCoordinateMode() const

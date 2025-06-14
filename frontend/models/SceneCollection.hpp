@@ -45,6 +45,7 @@ public:
 	std::string getFileStem() const;
 	std::filesystem::path getFilePath() const;
 	std::string getFilePathString() const;
+	std::chrono::time_point<std::chrono::system_clock> getLastUsedTime() const;
 
 	SceneCoordinateMode getCoordinateMode() const;
 	void setCoordinateMode(SceneCoordinateMode newMode);

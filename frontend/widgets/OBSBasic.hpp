@@ -121,23 +121,6 @@ struct OBSProfile {
 	std::filesystem::path profileFile;
 };
 
-struct OBSPromptResult {
-	bool success;
-	std::string promptValue;
-	bool optionValue;
-};
-
-struct OBSPromptRequest {
-	std::string title;
-	std::string prompt;
-	std::string promptValue;
-	bool withOption;
-	std::string optionPrompt;
-	bool optionValue;
-};
-
-using OBSPromptCallback = std::function<bool(const OBSPromptResult &result)>;
-
 using OBSProfileCache = std::map<std::string, OBSProfile>;
 using SceneCollection = OBS::SceneCollection;
 using OBSSceneCollectionCache = std::unordered_map<std::string, SceneCollection>;
@@ -291,8 +274,6 @@ private:
 	void GetFPSFraction(uint32_t &num, uint32_t &den) const;
 	void GetFPSNanoseconds(uint32_t &num, uint32_t &den) const;
 	void GetConfigFPS(uint32_t &num, uint32_t &den) const;
-
-	OBSPromptResult PromptForName(const OBSPromptRequest &request, const OBSPromptCallback &callback);
 
 	// TODO: Remove, orphaned instance method
 	void NewProject();

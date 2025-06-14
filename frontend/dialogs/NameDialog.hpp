@@ -24,6 +24,23 @@ class QLabel;
 class QLineEdit;
 class QString;
 
+struct OBSPromptResult {
+	bool success;
+	std::string promptValue;
+	bool optionValue;
+};
+
+struct OBSPromptRequest {
+	std::string title;
+	std::string prompt;
+	std::string promptValue;
+	bool withOption;
+	std::string optionPrompt;
+	bool optionValue;
+};
+
+using OBSPromptCallback = std::function<bool(const OBSPromptResult &result)>;
+
 class NameDialog : public QDialog {
 	Q_OBJECT
 
@@ -35,6 +52,10 @@ public:
 	static bool AskForName(QWidget *parent, const QString &title, const QString &text, std::string &userTextInput,
 			       const QString &placeHolder = QString(""), int maxSize = 170);
 
+	static OBSPromptResult PromptForName(QWidget *parent, const OBSPromptRequest &request,
+					     const OBSPromptCallback &callback);
+
+private:
 	// Returns true if user clicks OK, false otherwise
 	// userTextInput returns string that user typed into dialog
 	// userOptionReturn the checkbox was ticked user accepted
@@ -42,7 +63,6 @@ public:
 					 std::string &userTextInput, const QString &optionLabel, bool &optionChecked,
 					 const QString &placeHolder = QString(""));
 
-private:
 	QLabel *label;
 	QLineEdit *userText;
 	QCheckBox *checkbox;

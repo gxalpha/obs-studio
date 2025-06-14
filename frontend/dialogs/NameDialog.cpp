@@ -18,6 +18,7 @@
 #include "NameDialog.hpp"
 
 #include <OBSApp.hpp>
+#include <qt-wrappers.hpp>
 
 #include <QCheckBox>
 #include <QDialogButtonBox>
@@ -115,4 +116,46 @@ bool NameDialog::AskForNameWithOption(QWidget *parent, const QString &title, con
 	CleanWhitespace(userTextInput);
 	optionChecked = dialog.checkbox->isChecked();
 	return true;
+}
+
+OBSPromptResult NameDialog::PromptForName(QWidget *parent, const OBSPromptRequest &request,
+					  const OBSPromptCallback &callback)
+{
+	OBSPromptResult result;
+
+	for (;;) {
+		result.success = false;
+
+		if (request.withOption && !request.optionPrompt.empty()) {
+			result.optionValue = request.optionValue;
+
+			result.success = AskForNameWithOption(
+				parent, request.title.c_str(), request.prompt.c_str(), result.promptValue,
+				request.optionPrompt.c_str(), result.optionValue,
+				(request.promptValue.empty() ? nullptr : request.promptValue.c_str()));
+
+		} else {
+			result.success =
+				AskForName(parent, request.title.c_str(), request.prompt.c_str(), result.promptValue,
+					   (request.promptValue.empty() ? nullptr : request.promptValue.c_str()));
+		}
+
+		if (!result.success) {
+			break;
+		}
+
+		if (result.promptValue.empty()) {
+			OBSMessageBox::warning(parent, QTStr("NoNameEntered.Title"), QTStr("NoNameEntered.Text"));
+			continue;
+		}
+
+		if (!callback(result)) {
+			OBSMessageBox::warning(parent, QTStr("NameExists.Title"), QTStr("NameExists.Text"));
+			continue;
+		}
+
+		break;
+	}
+
+	return result;
 }

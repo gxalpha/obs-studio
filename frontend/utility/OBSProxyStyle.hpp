@@ -12,6 +12,7 @@ public:
 
 	int styleHint(StyleHint hint, const QStyleOption *option, const QWidget *widget,
 		      QStyleHintReturn *returnData) const override;
+	int pixelMetric(PixelMetric pm, const QStyleOption *option, const QWidget *widget) const override;
 };
 
 class OBSContextBarProxyStyle : public OBSProxyStyle {

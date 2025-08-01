@@ -1,4 +1,5 @@
 #include "OBSProxyStyle.hpp"
+#include <settings/OBSHotkeyEdit.hpp>
 
 #include <QStyleOption>
 #include "moc_OBSProxyStyle.cpp"
@@ -83,4 +84,13 @@ int OBSProxyStyle::styleHint(StyleHint hint, const QStyleOption *option, const Q
 #endif
 
 	return QProxyStyle::styleHint(hint, option, widget, returnData);
+}
+
+int OBSProxyStyle::pixelMetric(PixelMetric metric, const QStyleOption *option, const QWidget *widget) const
+{
+
+	if (metric == PM_TextCursorWidth && dynamic_cast<const OBSHotkeyEdit *>(widget))
+		return 0;
+
+	return QProxyStyle::pixelMetric(metric, option, widget);
 }

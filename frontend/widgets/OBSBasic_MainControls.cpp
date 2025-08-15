@@ -26,6 +26,9 @@
 #include <dialogs/OBSBasicInteraction.hpp>
 #include <dialogs/OBSBasicProperties.hpp>
 #include <dialogs/OBSBasicTransform.hpp>
+#ifdef ENABLE_IDIAN_PLAYGROUND
+#include <dialogs/OBSIdianPlayground.hpp>
+#endif
 #include <dialogs/OBSLogViewer.hpp>
 #include <dialogs/OBSLogReply.hpp>
 #ifdef __APPLE__
@@ -41,10 +44,6 @@
 #include <utility/WhatsNewInfoThread.hpp>
 #endif
 #include <wizards/AutoConfig.hpp>
-
-#ifdef ENABLE_IDIAN_PLAYGROUND
-#include "dialogs/OBSIdianPlayground.hpp"
-#endif
 
 #include <qt-wrappers.hpp>
 

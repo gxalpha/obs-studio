@@ -23,6 +23,9 @@
 
 class OBSBasic;
 class OBSPropertiesView;
+namespace properties_view {
+class PropertiesView;
+}
 
 class OBSBasicProperties : public QDialog {
 	Q_OBJECT
@@ -38,7 +41,7 @@ private:
 	OBSSignal renamedSignal;
 	OBSSignal updatePropertiesSignal;
 	OBSData oldSettings;
-	OBSPropertiesView *view;
+	properties_view::PropertiesView *view;
 	QDialogButtonBox *buttonBox;
 	QSplitter *windowSplitter;
 
@@ -54,7 +57,6 @@ private:
 	static void DrawTransitionPreview(void *data, uint32_t cx, uint32_t cy);
 	void UpdateCallback(void *obj, obs_data_t *settings);
 	bool ConfirmQuit();
-	int CheckSettings();
 	void Cleanup();
 
 private slots:

@@ -300,7 +300,7 @@ private:
 	void LoadProject();
 
 public slots:
-	void UpdatePatronJson(const QString &text, const QString &error);
+	void UpdatePatronJson(const std::string &text, const std::string &error);
 	void UpdateEditMenu();
 	void applicationShutdown() noexcept;
 
@@ -634,7 +634,7 @@ private slots:
 
 	void on_resetUI_triggered();
 
-	void logUploadFinished(const QString &text, const QString &error, OBS::LogFileType uploadType);
+	void logUploadFinished(const std::string &text, const std::string &error, OBS::LogFileType uploadType);
 
 	void updateCheckFinished();
 
@@ -1601,7 +1601,7 @@ private:
 	void CheckForUpdates(bool manualUpdate);
 
 	void MacBranchesFetched(const QString &branch, bool manualUpdate);
-	void ReceivedIntroJson(const QString &text);
+	void ReceivedIntroJson(const std::string &text);
 	void ShowWhatsNew(const QString &url);
 
 	/* -------------------------------------

@@ -1087,7 +1087,7 @@ public:
 	inline bool SavingDisabled() const { return disableSaving; }
 
 	inline const OBSSceneCollectionCache &GetSceneCollectionCache() const noexcept { return collections; };
-	std::vector<std::reference_wrapper<OBS::SceneCollection>> GetSceneCollectionsSorted() noexcept;
+	std::vector<std::reference_wrapper<OBS::SceneCollection>> GetSceneCollectionsSorted();
 
 	SceneCollection &GetCurrentSceneCollection();
 	void SetCurrentSceneCollection(SceneCollection &collection);

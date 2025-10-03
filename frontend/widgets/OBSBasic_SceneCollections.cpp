@@ -418,7 +418,7 @@ void OBSBasic::RefreshSceneCollectionCache()
 	collections.swap(foundCollections);
 }
 
-std::vector<std::reference_wrapper<OBS::SceneCollection>> OBSBasic::GetSceneCollectionsSorted() noexcept
+std::vector<std::reference_wrapper<OBS::SceneCollection>> OBSBasic::GetSceneCollectionsSorted()
 {
 	std::vector<std::reference_wrapper<OBS::SceneCollection>> sorted;
 	sorted.reserve(collections.size());
